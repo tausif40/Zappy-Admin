@@ -37,6 +37,7 @@ import {
 	Monitor,
 } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { ScrollArea } from "../ui/scroll-area"
 
 const navigation = [
 	{ name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -73,7 +74,7 @@ export function SideNavbar({ isCollapsed, setIsCollapsed }: AdminNavbarProps) {
 			{/* Desktop Sidebar */}
 			<div
 				className={cn(
-					"hidden md:flex md:flex-col md:fixed md:inset-y-0 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 transition-all duration-300",
+					"relative hidden md:flex md:flex-col md:fixed md:inset-y-0 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 transition-all duration-300",
 					isCollapsed ? "md:w-20" : "md:w-64",
 				)}
 			>
@@ -95,38 +96,38 @@ export function SideNavbar({ isCollapsed, setIsCollapsed }: AdminNavbarProps) {
 				</div>
 
 				{/* Navigation */}
-				<nav className="flex-1 p-4 space-y-2">
-					{navigation.map((item) => {
-						const isActive = pathname.startsWith(item.href)
-						return (
-							<Link
-								key={item.name}
-								href={item.href}
-								className={cn(
-									"flex items-center space-x-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
-									isActive
-										? "bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300"
-										: "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800",
-								)}
-							>
-								<item.icon className="h-5 w-5 flex-shrink-0" />
-								{!isCollapsed && (
-									<>
-										<span>{item.name}</span>
-										{item.badge && (
-											<Badge variant="secondary" className="ml-auto">
-												{item.badge}
-											</Badge>
-										)}
-									</>
-								)}
-							</Link>
-						)
-					})}
-				</nav>
+				<ScrollArea className="h-screen pb-14">
+					<nav className="flex-1 p-4 space-y-2">
+						{navigation.map((item) => {
+							const isActive = pathname.startsWith(item.href)
+							return (
+								<Link
+									key={item.name}
+									href={item.href}
+									className={cn("flex items-center space-x-3 px-3 py-2 rounded-md text-sm font-medium transition-colors",
+										isActive ? "bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300"
+											: "text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800",
+									)}
+								>
+									<item.icon className="h-5 w-5 flex-shrink-0" />
+									{!isCollapsed && (
+										<>
+											<span>{item.name}</span>
+											{item.badge && (
+												<Badge variant="secondary" className="ml-auto">
+													{item.badge}
+												</Badge>
+											)}
+										</>
+									)}
+								</Link>
+							)
+						})}
+					</nav>
+				</ScrollArea>
 
 				{/* User Menu */}
-				<div className="p-4 border-t border-gray-200 dark:border-gray-700">
+				<div className="absolute bottom-0 right-0 p-2 w-full bg-white border-t border-gray-200 dark:border-gray-700">
 					<DropdownMenu>
 						<DropdownMenuTrigger asChild>
 							<Button variant="ghost" className={cn("w-full justify-start", isCollapsed && "justify-center")}>
