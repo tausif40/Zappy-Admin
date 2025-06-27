@@ -1,23 +1,15 @@
 import React from 'react'
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import { Dialog, DialogClose, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import { Search, Plus, Edit, Trash2, MoreHorizontal, Gift, Calendar, Star, Eye, Palette, Sparkles } from "lucide-react"
+import { Dialog, DialogClose, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Plus, Edit, Sparkles, Trash } from "lucide-react"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
 import { Label } from "@/components/ui/label"
 import { Textarea } from '../ui/textarea'
-import { ArrowLeft, ArrowRight, CheckCircle, Crown, Heart, Wand2, ChevronRight } from "lucide-react"
+import { Crown, Heart, Wand2 } from "lucide-react"
+import { Switch } from "@/components/ui/switch"
+import { Alert, AlertDescription } from '../ui/alert'
 
 function AddThemes() {
 
@@ -58,21 +50,27 @@ function AddThemes() {
 												<Label htmlFor="name">Theme Name</Label>
 												<Input id="name-" name="name" placeholder='Enter name' />
 											</div>
-											<div className='flex gap-4'>
-												<div className="grid gap-3">
-													<Label htmlFor="name">Theme Icon</Label>
-													<Input id="name-" name="name" placeholder='Icon' />
-												</div>
-												<div className="grid gap-3">
-													<Label htmlFor="image">Add image</Label>
-													<Input type='file' id="image" name="name" placeholder='Enter name' />
-												</div>
+											<div className="grid gap-3">
+												<Label htmlFor="icon">Theme Icon</Label>
+												<Input type='file' id="icon" name="icon" placeholder='Icon' />
+											</div>
+											<div className="grid gap-3">
+												<Label htmlFor="image">Add image</Label>
+												<Input type='file' id="image" name="name" placeholder='Enter name' />
 											</div>
 											<div className="grid gap-3">
 												<Label htmlFor="username-1">Description</Label>
 												<Textarea id="username-1" name="description" placeholder='Write description..' />
 											</div>
+											<div className="flex items-center space-x-2">
+												<Alert variant="default" className='py-2'>
+													<AlertDescription className='flex items-center gap-2'>
+														<Switch id="isActive" />
+														<Label htmlFor="isActive">Make Priority</Label>
+													</AlertDescription>
+												</Alert>
 
+											</div>
 										</div>
 										<DialogFooter>
 											<DialogClose asChild>
@@ -105,25 +103,23 @@ function AddThemes() {
 									</div>
 								</CardHeader>
 								<CardContent>
-									<div className="space-y-2">
-										<div className="flex justify-between text-sm">
-											{/* <span className="text-gray-600">Description:</span> */}
-											<span className="font-medium text-muted-foreground">{theme.description}</span>
-										</div>
-										<div className="flex gap-2 text-sm">
-											<span className="text-emerald-600 font-semibold">Total Events:</span>
-											<span className="font-medium text-pink-600">{theme.events}</span>
-										</div>
-										<div className="flex space-x-2 mt-4">
-											<Button size="sm" variant="outline" className="flex-1">
-												<Edit className="w-4 h-4 mr-1" />
-												Edit
-											</Button>
-											<Button size="sm" variant="outline" className="flex-1">
-												<Palette className="w-4 h-4 mr-1" />
-												Customize
-											</Button>
-										</div>
+									<div className="flex justify-between text-sm">
+										{/* <span className="text-gray-600">Description:</span> */}
+										<span className="font-medium text-muted-foreground line-clamp-2">{theme.description}</span>
+									</div>
+									<div className="flex gap-2 text-sm mt-2">
+										<span className="text-emerald-600 font-semibold">Total Events:</span>
+										<span className="font-medium text-pink-600">{theme.events}</span>
+									</div>
+									<div className="flex space-x-2 mt-4">
+										<Button size="sm" variant="destructive" className="flex-1">
+											<Trash className="w-4 h-4 mr-1" />
+											Delate
+										</Button>
+										<Button size="sm" variant="outline" className="flex-1">
+											<Edit className="w-4 h-4 mr-1" />
+											Edit
+										</Button>
 									</div>
 								</CardContent>
 							</Card>

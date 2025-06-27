@@ -53,7 +53,7 @@ export default function Login() {
                 type="email"
                 placeholder="admin@zappy.com"
                 value={email}
-                onChange={(e) => setEmail(e.target.value)}
+                onChange={(e) => { setEmail(e.target.value); setError('') }}
                 required
               />
             </div>
@@ -65,7 +65,7 @@ export default function Login() {
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter admin password"
                   value={password}
-                  onChange={(e) => setPassword(e.target.value)}
+                  onChange={(e) => { setPassword(e.target.value); setError('') }}
                   required
                 />
                 <Button

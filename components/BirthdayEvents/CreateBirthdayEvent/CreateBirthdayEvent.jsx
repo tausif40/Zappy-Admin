@@ -10,7 +10,11 @@ import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, Plus, X, Upload, Eye } from "lucide-react"
+import { ArrowLeft, Plus, X, Upload, Eye, CircleCheckBig, Dot } from "lucide-react"
+import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
+import { Checkbox } from '@/components/ui/checkbox'
+import { ScrollArea } from '@/components/ui/scroll-area'
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
 
 const themes = [
 	{ value: "princess", label: "Princess", color: "#EC4899" },
@@ -19,15 +23,49 @@ const themes = [
 	{ value: "pirate", label: "Pirate", color: "#F59E0B" },
 	{ value: "fairy", label: "Fairy Tale", color: "#10B981" },
 ]
+const allOptions = [
+	'React',
+	'Next.js',
+	'Vue',
+	'Angular',
+	'Svelte',
+	'JavaScript',
+	'TypeScript',
+	'Tailwind',
+	'Bootstrap',
+	'Node.js',
+	'Express',
+	'MongoDB',
+	'PostgreSQL',
+	'Python',
+	'Django',
+	'Flask',
+]
+
+const tags = [
+	"Birthday Parties",
+	"Themed Events",
+	"New Arrival",
+	"Top Rated",
+	"Educational",
+	"Budget Friendly",
+	"Creative Pick",
+	"Party Vibe",
+]
 
 export default function CreateBirthdayEvent() {
 	const router = useRouter()
+	const [ searchTerm, setSearchTerm ] = useState('')
+	const [ selectedOptions, setSelectedOptions ] = useState([])
+	const [ showResults, setShowResults ] = useState(false)
 	const [ formData, setFormData ] = useState({
 		title: "",
 		theme: "",
 		ageGroup: "",
+		guests: "",
 		duration: "",
 		price: "",
+		banner: "",
 		description: "",
 		highlights: [ "" ],
 		includes: [ "" ],
@@ -37,11 +75,20 @@ export default function CreateBirthdayEvent() {
 
 	const [ previewMode, setPreviewMode ] = useState(false)
 
-	const handleAddItem = (field) => {
-		setFormData({
-			...formData,
-			[ field ]: [ ...formData[ field ], "" ],
-		})
+	const filteredOptions = allOptions.filter(option =>
+		option.toLowerCase().includes(searchTerm.toLowerCase())
+	)
+
+	const toggleOption = (value) => {
+		setSelectedOptions(prev =>
+			prev.includes(value) ? prev.filter(v => v !== value) : [ ...prev, value ]
+		)
+	}
+	console.log('Selected Options:', selectedOptions)
+
+	const handleConfirm = () => {
+		console.log('Selected Options:', selectedOptions)
+		setShowResults(true)
 	}
 
 	const handleRemoveItem = (field, index) => {
@@ -69,7 +116,7 @@ export default function CreateBirthdayEvent() {
 	const selectedTheme = themes.find((t) => t.value === formData.theme)
 
 	return (
-		<div className="space-y-6">
+		<div className="min-h-screen space-y-6">
 			{/* Header */}
 			<Button variant="secondary" onClick={() => router.back()}>
 				<ArrowLeft className="h-4 w-4 mr-2" />
@@ -77,13 +124,13 @@ export default function CreateBirthdayEvent() {
 			</Button>
 			<div className="flex items-center justify-between">
 				<div className="flex items-center space-x-4">
-					
+
 					<div>
 						<h1 className="text-3xl font-bold text-gray-900 dark:text-white">Create Birthday Event</h1>
 						<p className="text-gray-600 dark:text-gray-400">Add a new birthday party event</p>
 					</div>
 				</div>
-				<div className="flex space-x-3">
+				{/* <div className="flex space-x-3">
 					<Button variant="outline" onClick={() => setPreviewMode(!previewMode)}>
 						<Eye className="h-4 w-4 mr-2" />
 						{previewMode ? "Edit Mode" : "Preview"}
@@ -91,7 +138,7 @@ export default function CreateBirthdayEvent() {
 					<Button onClick={handleSubmit} className="bg-pink-600 hover:bg-pink-700">
 						Create Event
 					</Button>
-				</div>
+				</div> */}
 			</div>
 
 			<div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -114,25 +161,6 @@ export default function CreateBirthdayEvent() {
 								/>
 							</div>
 
-							<div>
-								<Label htmlFor="theme">Theme</Label>
-								<Select value={formData.theme} onValueChange={(value) => setFormData({ ...formData, theme: value })}>
-									<SelectTrigger>
-										<SelectValue placeholder="Select a theme" />
-									</SelectTrigger>
-									<SelectContent>
-										{themes.map((theme) => (
-											<SelectItem key={theme.value} value={theme.value}>
-												<div className="flex items-center space-x-2">
-													<div className="w-3 h-3 rounded-full" style={{ backgroundColor: theme.color }} />
-													<span>{theme.label}</span>
-												</div>
-											</SelectItem>
-										))}
-									</SelectContent>
-								</Select>
-							</div>
-
 							<div className="grid grid-cols-2 gap-4">
 								<div>
 									<Label htmlFor="ageGroup">Age Group</Label>
@@ -144,6 +172,19 @@ export default function CreateBirthdayEvent() {
 									/>
 								</div>
 								<div>
+									<Label htmlFor="guests">Max Guests</Label>
+									<Input
+										id="guests"
+										placeholder="e.g., 10-15 guests"
+										value={formData.guests}
+										onChange={(e) => setFormData({ ...formData, guests: e.target.value })}
+									/>
+								</div>
+
+							</div>
+
+							<div className="grid grid-cols-2 gap-4">
+								<div>
 									<Label htmlFor="duration">Duration</Label>
 									<Input
 										id="duration"
@@ -152,16 +193,26 @@ export default function CreateBirthdayEvent() {
 										onChange={(e) => setFormData({ ...formData, duration: e.target.value })}
 									/>
 								</div>
+								<div>
+									<Label htmlFor="price">Price</Label>
+									<Input
+										id="price"
+										type="number"
+										placeholder="299"
+										value={formData.price}
+										onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+									/>
+								</div>
 							</div>
 
 							<div>
-								<Label htmlFor="price">Price ($)</Label>
+								<Label htmlFor="banner">Upload banner</Label>
 								<Input
-									id="price"
-									type="number"
-									placeholder="299"
-									value={formData.price}
-									onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+									type="file"
+									id="banner"
+									placeholder="upload image"
+									value={formData.banner}
+									onChange={(e) => setFormData({ ...formData, banner: e.target.value })}
 								/>
 							</div>
 
@@ -186,109 +237,212 @@ export default function CreateBirthdayEvent() {
 						</CardHeader>
 						<CardContent className="space-y-6">
 							{/* Highlights */}
-							<div>
-								<div className="flex items-center justify-between mb-3">
-									<Label>Highlights</Label>
-									<Button size="sm" variant="outline" onClick={() => handleAddItem("highlights")}>
-										<Plus className="h-4 w-4 mr-1" />
-										Add
-									</Button>
-								</div>
-								<div className="space-y-2">
-									{formData.highlights.map((highlight, index) => (
-										<div key={index} className="flex items-center space-x-2">
-											<Input
-												placeholder="Enter highlight..."
-												value={highlight}
-												onChange={(e) => handleItemChange("highlights", index, e.target.value)}
-											/>
-											{formData.highlights.length > 1 && (
-												<Button size="sm" variant="ghost" onClick={() => handleRemoveItem("highlights", index)}>
-													<X className="h-4 w-4" />
-												</Button>
-											)}
+							<div className="space-y-2">
+								<Dialog>
+									<div className="flex items-center justify-between mb-3">
+										<p className="font-semibold text-lg text-muted-foreground">Highlights :</p>
+										<DialogTrigger asChild>
+											<Button variant="outline" size='sm'><Plus className="h-4 w-4 mr-1" /> Add</Button>
+										</DialogTrigger>
+									</div>
+
+									<DialogContent className="max-w-lg">
+										<DialogHeader>
+											<DialogTitle>Add Highlights Point</DialogTitle>
+										</DialogHeader>
+
+										<Input
+											placeholder="Search..."
+											value={searchTerm}
+											onChange={e => setSearchTerm(e.target.value)}
+											className="mb-4"
+										/>
+
+										<ScrollArea className="h-60">
+											<div className="grid grid-cols-2 gap-4">
+												{filteredOptions.map(option => (
+													<label key={option} className="flex items-center space-x-2 hover:bg-gray-100 rounded-sm px-2">
+														<Checkbox
+															checked={selectedOptions.includes(option)}
+															onCheckedChange={() => toggleOption(option)}
+														/>
+														<span>{option}</span>
+													</label>
+												))}
+											</div>
+										</ScrollArea>
+
+										<Button className="mt-4 w-full" onClick={handleConfirm}>
+											Confirm Selection
+										</Button>
+									</DialogContent>
+								</Dialog>
+
+								<Card className="px-4 py-2 grid grid-cols-2 gap-1 max-h-52 overflow-y-auto">
+									{selectedOptions.map((value) => (
+										<div className="text-sm text-gray-700 flex items-center">
+											{value} &nbsp; <X size={12} className="text-red-500 cursor-pointer" />
 										</div>
 									))}
-								</div>
+								</Card>
+
 							</div>
 
 							{/* Includes */}
-							<div>
-								<div className="flex items-center justify-between mb-3">
+							{/* <div className="flex items-center justify-between mb-3">
 									<Label>Includes</Label>
 									<Button size="sm" variant="outline" onClick={() => handleAddItem("includes")}>
 										<Plus className="h-4 w-4 mr-1" />
 										Add
 									</Button>
-								</div>
-								<div className="space-y-2">
-									{formData.includes.map((include, index) => (
-										<div key={index} className="flex items-center space-x-2">
-											<Input
-												placeholder="Enter inclusion..."
-												value={include}
-												onChange={(e) => handleItemChange("includes", index, e.target.value)}
-											/>
-											{formData.includes.length > 1 && (
-												<Button size="sm" variant="ghost" onClick={() => handleRemoveItem("includes", index)}>
-													<X className="h-4 w-4" />
-												</Button>
-											)}
+								</div> */}
+							<div className="space-y-2">
+								<Dialog>
+									<div className="flex items-center justify-between mb-3">
+										<p className="font-semibold text-lg text-muted-foreground">Includes :</p>
+										<DialogTrigger asChild>
+											<Button variant="outline" size='sm'><Plus className="h-4 w-4 mr-1" /> Add</Button>
+										</DialogTrigger>
+									</div>
+
+									<DialogContent className="max-w-lg">
+										<DialogHeader>
+											<DialogTitle>Add Includes Point</DialogTitle>
+										</DialogHeader>
+
+										<Input
+											placeholder="Search..."
+											value={searchTerm}
+											onChange={e => setSearchTerm(e.target.value)}
+											className="mb-4"
+										/>
+
+										<ScrollArea className="h-60">
+											<div className="grid grid-cols-2 gap-4">
+												{filteredOptions.map(option => (
+													<label key={option} className="flex items-center space-x-2 hover:bg-gray-100 rounded-sm px-2">
+														<Checkbox
+															checked={selectedOptions.includes(option)}
+															onCheckedChange={() => toggleOption(option)}
+														/>
+														<span>{option}</span>
+													</label>
+												))}
+											</div>
+										</ScrollArea>
+
+										<Button className="mt-4 w-full" onClick={handleConfirm}>
+											Confirm Selection
+										</Button>
+									</DialogContent>
+								</Dialog>
+
+								<Card className="px-4 py-2 grid grid-cols-2 gap-1 max-h-52 overflow-y-auto">
+									{selectedOptions.map((value) => (
+										<div className="text-sm text-gray-700 flex items-center">
+											{value} &nbsp; <X size={12} className="text-red-500 cursor-pointer" />
 										</div>
 									))}
-								</div>
+								</Card>
 							</div>
 
 							{/* Policies */}
 							<div>
-								<div className="flex items-center justify-between mb-3">
-									<Label>Policies</Label>
-									<Button size="sm" variant="outline" onClick={() => handleAddItem("policies")}>
-										<Plus className="h-4 w-4 mr-1" />
-										Add
-									</Button>
-								</div>
-								<div className="space-y-2">
-									{formData.policies.map((policy, index) => (
-										<div key={index} className="flex items-center space-x-2">
-											<Input
-												placeholder="Enter policy..."
-												value={policy}
-												onChange={(e) => handleItemChange("policies", index, e.target.value)}
-											/>
-											{formData.policies.length > 1 && (
-												<Button size="sm" variant="ghost" onClick={() => handleRemoveItem("policies", index)}>
-													<X className="h-4 w-4" />
-												</Button>
-											)}
+								<Dialog>
+									<div className="flex items-center justify-between mb-3">
+										<p className="font-semibold text-lg text-muted-foreground">Policy :</p>
+										<DialogTrigger asChild>
+											<Button variant="outline" size='sm'><Plus className="h-4 w-4 mr-1" /> Add</Button>
+										</DialogTrigger>
+									</div>
+
+									<DialogContent className="max-w-lg">
+										<DialogHeader>
+											<DialogTitle>Add Policy Point</DialogTitle>
+										</DialogHeader>
+
+										<Input
+											placeholder="Search..."
+											value={searchTerm}
+											onChange={e => setSearchTerm(e.target.value)}
+											className="mb-4"
+										/>
+
+										<ScrollArea className="h-60">
+											<div className="grid grid-cols-2 gap-4">
+												{filteredOptions.map(option => (
+													<label key={option} className="flex items-center space-x-2 hover:bg-gray-100 rounded-sm px-2">
+														<Checkbox
+															checked={selectedOptions.includes(option)}
+															onCheckedChange={() => toggleOption(option)}
+														/>
+														<span>{option}</span>
+													</label>
+												))}
+											</div>
+										</ScrollArea>
+
+										<Button className="mt-4 w-full" onClick={handleConfirm}>
+											Confirm Selection
+										</Button>
+									</DialogContent>
+								</Dialog>
+
+								<Card className="px-4 py-2 grid grid-cols-2 gap-1 max-h-52 overflow-y-auto">
+									{selectedOptions.map((value) => (
+										<div className="text-sm text-gray-700 flex items-center">
+											{value} &nbsp; <X size={12} className="text-red-500 cursor-pointer" />
 										</div>
 									))}
-								</div>
+								</Card>
 							</div>
 						</CardContent>
 					</Card>
 
-					{/* Settings */}
+					{/* Tags */}
 					<Card>
 						<CardHeader>
-							<CardTitle>Settings</CardTitle>
-							<CardDescription>Configure event settings</CardDescription>
+							<CardTitle >Add Tags</CardTitle>
+							<CardDescription>It will show top of card</CardDescription>
 						</CardHeader>
 						<CardContent>
-							<div className="flex items-center space-x-2">
-								<Switch
-									id="isActive"
-									checked={formData.isActive}
-									onCheckedChange={(checked) => setFormData({ ...formData, isActive: checked })}
+							<RadioGroup className="grid grid-cols-2 gap-4">
+								{tags.map((option) => (
+									<div key={option} className="flex items-center space-x-2 text-muted-foreground">
+										<RadioGroupItem value={option} id={option} />
+										<Label htmlFor={option}>{option}</Label>
+									</div>
+								))}
+							</RadioGroup>
+						</CardContent>
+					</Card>
+
+					<Card>
+						<CardHeader>
+							<CardTitle>Discount (Optional)</CardTitle>
+							<CardDescription>Add discount offer</CardDescription>
+						</CardHeader>
+						<CardContent>
+							<div>
+								<Label htmlFor="discount">Discount (%)</Label>
+								<Input
+									type="number"
+									id="discount"
+									placeholder="percent"
 								/>
-								<Label htmlFor="isActive">Make event active immediately</Label>
 							</div>
 						</CardContent>
 					</Card>
+
+					<div className="flex justify-end">
+						<Button size='lg' className="text-lg">
+							Create
+						</Button>
+					</div>
 				</div>
 
 				{/* Preview */}
-				<div className="space-y-6">
+				<div className="space-y-6 sticky top-4 h-96">
 					<Card>
 						<CardHeader>
 							<CardTitle>Event Preview</CardTitle>

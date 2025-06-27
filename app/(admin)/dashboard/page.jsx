@@ -153,10 +153,10 @@ export default function AdminDashboard() {
 								<div key={activity.id} className="flex items-center space-x-4">
 									<div
 										className={`w-2 h-2 rounded-full ${activity.status === "success"
-												? "bg-green-500"
-												: activity.status === "pending"
-													? "bg-yellow-500"
-													: "bg-red-500"
+											? "bg-green-500"
+											: activity.status === "pending"
+												? "bg-yellow-500"
+												: "bg-red-500"
 											}`}
 									/>
 									<div className="flex-1">
@@ -177,22 +177,20 @@ export default function AdminDashboard() {
 						<CardDescription>Items requiring your attention</CardDescription>
 					</CardHeader>
 					<CardContent>
-						<div className="space-y-4">
-							{pendingTasks.map((task) => (
-								<Link key={task.id} href={task.href}>
-									<div className="flex items-center justify-between p-3 rounded-lg border hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer">
-										<div>
-											<p className="text-sm font-medium">{task.title}</p>
-											<div className="flex items-center space-x-2 mt-1">
-												<Badge variant={task.priority === "high" ? "destructive" : "secondary"}>{task.priority}</Badge>
-												<span className="text-xs text-gray-500">{task.count} items</span>
-											</div>
+						{pendingTasks.map((task) => (
+							<Link key={task.id} href={task.href}>
+								<div className="mt-2 flex items-center justify-between p-3 rounded-lg border hover:bg-gray-50 dark:hover:bg-gray-800 cursor-pointer">
+									<div>
+										<p className="text-sm font-medium">{task.title}</p>
+										<div className="flex items-center space-x-2 mt-1">
+											<Badge variant={task.priority === "high" ? "destructive" : "secondary"}>{task.priority}</Badge>
+											<span className="text-xs text-gray-500">{task.count} items</span>
 										</div>
-										<ArrowUpRight className="h-4 w-4 text-gray-400" />
 									</div>
-								</Link>
-							))}
-						</div>
+									<ArrowUpRight className="h-4 w-4 text-gray-400" />
+								</div>
+							</Link>
+						))}
 					</CardContent>
 				</Card>
 			</div>
