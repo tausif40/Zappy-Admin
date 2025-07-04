@@ -43,6 +43,7 @@ const allOptions = [
 ]
 
 const tags = [
+	"No tag",
 	"Birthday Parties",
 	"Themed Events",
 	"New Arrival",
@@ -51,6 +52,16 @@ const tags = [
 	"Budget Friendly",
 	"Creative Pick",
 	"Party Vibe",
+	"No tag",
+	"Birthday Parties",
+	"Themed Events",
+	"New Arrival",
+	"Top Rated",
+	"Educational",
+	"Budget Friendly",
+	"Creative Pick",
+	"Party Vibe",
+
 ]
 
 export default function CreateBirthdayEvent() {
@@ -277,14 +288,15 @@ export default function CreateBirthdayEvent() {
 										</Button>
 									</DialogContent>
 								</Dialog>
-
-								<Card className="px-4 py-2 grid grid-cols-2 gap-1 max-h-52 overflow-y-auto">
-									{selectedOptions.map((value) => (
-										<div className="text-sm text-gray-700 flex items-center">
-											{value} &nbsp; <X size={12} className="text-red-500 cursor-pointer" />
-										</div>
-									))}
-								</Card>
+								<ScrollArea className="p-3 rounded-md border">
+									<Card className="max-h-44 grid grid-cols-2 gap-2 border-0 shadow-none">
+										{selectedOptions.map((value) => (
+											<div className="text-sm text-gray-700 flex items-center">
+												{value} &nbsp; <X size={12} className="text-red-500 cursor-pointer" />
+											</div>
+										))}
+									</Card>
+								</ScrollArea >
 
 							</div>
 
@@ -400,20 +412,25 @@ export default function CreateBirthdayEvent() {
 					</Card>
 
 					{/* Tags */}
-					<Card>
-						<CardHeader>
-							<CardTitle >Add Tags</CardTitle>
-							<CardDescription>It will show top of card</CardDescription>
+					<Card className="shadow">
+						<CardHeader className="flex flex-row justify-between items-start">
+							<div>
+								<CardTitle >Add Tags</CardTitle>
+								<CardDescription>It will show top of card</CardDescription>
+							</div>
+							<Button variant="outline" size='sm'><Plus className="h-4 w-4" /> Add</Button>
 						</CardHeader>
 						<CardContent>
-							<RadioGroup className="grid grid-cols-2 gap-4">
-								{tags.map((option) => (
-									<div key={option} className="flex items-center space-x-2 text-muted-foreground">
-										<RadioGroupItem value={option} id={option} />
-										<Label htmlFor={option}>{option}</Label>
-									</div>
-								))}
-							</RadioGroup>
+							<ScrollArea className="h-52 p-3 rounded-md border">
+								<RadioGroup className="grid grid-cols-2 gap-4">
+									{tags.map((option) => (
+										<div key={option} className="flex gap-2 items-center text-muted-foreground">
+											<RadioGroupItem value={option} id={option} />
+											<Label htmlFor={option}>{option}</Label>
+										</div>
+									))}
+								</RadioGroup>
+							</ScrollArea>
 						</CardContent>
 					</Card>
 

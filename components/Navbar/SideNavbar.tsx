@@ -5,37 +5,8 @@ import { useTheme } from "@/components/Providers/theme-provider"
 import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Badge } from "@/components/ui/badge"
-import {
-	DropdownMenu,
-	DropdownMenuContent,
-	DropdownMenuItem,
-	DropdownMenuLabel,
-	DropdownMenuSeparator,
-	DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
-import {
-	LayoutDashboard,
-	Users,
-	Store,
-	Calendar,
-	Gift,
-	Sparkles,
-	Tags,
-	Star,
-	CheckCircle,
-	Settings,
-	CreditCard,
-	DollarSign,
-	Menu,
-	Bell,
-	User,
-	LogOut,
-	ChevronLeft,
-	ChevronRight,
-	Moon,
-	Sun,
-	Monitor,
-} from "lucide-react"
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu"
+import { LayoutDashboard, Users, Store, Calendar, Gift, Sparkles, Tags, Star, CheckCircle, Settings, CreditCard, DollarSign, Menu, Bell, User, LogOut, ChevronLeft, ChevronRight, Moon, Sun, Monitor, PackagePlus, } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { ScrollArea } from "../ui/scroll-area"
 
@@ -46,6 +17,7 @@ const navigation = [
 	{ name: "Events", href: "/events", icon: Calendar },
 	{ name: "Birthday Events", href: "/birthday-events", icon: Gift },
 	{ name: "Curated Events", href: "/curated-events", icon: Sparkles },
+	{ name: "Add Ons", href: "/add-ons", icon: PackagePlus },
 	{ name: "Categories", href: "/categories", icon: Tags },
 	{ name: "Testimonials", href: "/testimonials", icon: Star },
 	{ name: "Verification", href: "/verification", icon: CheckCircle, badge: "3" },
