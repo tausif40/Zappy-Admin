@@ -15,7 +15,6 @@ import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from 
 import { Checkbox } from '@/components/ui/checkbox'
 import { ScrollArea } from '@/components/ui/scroll-area'
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group"
-import MultiSelectDropdown from "@/utils/MultiSelectDropdown"
 
 const themes = [
 	{ value: "princess", label: "Princess", color: "#EC4899" },
@@ -24,21 +23,6 @@ const themes = [
 	{ value: "pirate", label: "Pirate", color: "#F59E0B" },
 	{ value: "fairy", label: "Fairy Tale", color: "#10B981" },
 ]
-
-const city = [
-	{ _id: 1, name: "Mumbai" },
-	{ _id: 2, name: "Delhi" },
-	{ _id: 3, name: "Bangalore" },
-	{ _id: 4, name: "Hyderabad" },
-	{ _id: 5, name: "Chennai" },
-	{ _id: 6, name: "Kolkata" },
-	{ _id: 7, name: "Pune" },
-	{ _id: 8, name: "Ahmedabad" },
-	{ _id: 9, name: "Jaipur" },
-	{ _id: 10, name: "Lucknow" }
-]
-
-
 const allOptions = [
 	'React',
 	'Next.js',
@@ -80,7 +64,7 @@ const tags = [
 
 ]
 
-export default function CreateBirthdayEvent() {
+export default function CreateCuratedEvent() {
 	const router = useRouter()
 	const [ searchTerm, setSearchTerm ] = useState('')
 	const [ selectedOptions, setSelectedOptions ] = useState([])
@@ -97,7 +81,6 @@ export default function CreateBirthdayEvent() {
 		highlights: [ "" ],
 		includes: [ "" ],
 		policies: [ "" ],
-		location: [ "" ],
 		isActive: true,
 	})
 
@@ -112,8 +95,7 @@ export default function CreateBirthdayEvent() {
 			prev.includes(value) ? prev.filter(v => v !== value) : [ ...prev, value ]
 		)
 	}
-	console.log('formData location:', formData.location)
-	// console.log('Selected Options:', selectedOptions)
+	console.log('Selected Options:', selectedOptions)
 
 	const handleConfirm = () => {
 		console.log('Selected Options:', selectedOptions)
@@ -142,14 +124,6 @@ export default function CreateBirthdayEvent() {
 		router.push("/admin/dashboard/birthday-events")
 	}
 
-	const handleMultiSelectChange = (name, selectedItems) => {
-		setFormData((prevFormData) => ({ ...prevFormData, [ name ]: selectedItems }));
-
-		// setErrors((prevErrors) => ({
-		// 	...prevErrors, [ name ]: ''
-		// }));
-	};
-
 	const selectedTheme = themes.find((t) => t.value === formData.theme)
 
 	return (
@@ -163,8 +137,8 @@ export default function CreateBirthdayEvent() {
 				<div className="flex items-center space-x-4">
 
 					<div>
-						<h1 className="text-3xl font-bold text-gray-900 dark:text-white">Create Birthday Event</h1>
-						<p className="text-gray-600 dark:text-gray-400">Add a new birthday party event</p>
+						<h1 className="text-3xl font-bold text-gray-900 dark:text-white">Create Curated Event</h1>
+						<p className="text-gray-600 dark:text-gray-400">Add a new curated party event</p>
 					</div>
 				</div>
 				{/* <div className="flex space-x-3">
@@ -242,45 +216,15 @@ export default function CreateBirthdayEvent() {
 								</div>
 							</div>
 
-							<div className="grid grid-cols-2 gap-4">
-								<div>
-									<Label htmlFor="banner">Upload banner</Label>
-									<Input
-										type="file"
-										id="banner"
-										placeholder="upload image"
-										value={formData.banner}
-										onChange={(e) => setFormData({ ...formData, banner: e.target.value })}
-									/>
-								</div>
-								<div className-='w-full'>
-									<Label htmlFor="location">Locations</Label>
-									{/* <Input
-										id="location"
-										type="text"
-										placeholder="enter location"
-										value={formData.location}
-										onChange={(e) => setFormData({ ...formData, location: e.target.value })}
-									/> */}
-									<Select className-='w-full'>
-										<SelectTrigger>
-											<SelectValue placeholder="Select a city" />
-										</SelectTrigger>
-										<SelectContent>
-											<SelectItem value="1">Mumbai</SelectItem>
-											<SelectItem value="2">Delhi</SelectItem>
-											<SelectItem value="3">Bangalore</SelectItem>
-											<SelectItem value="4">Hyderabad</SelectItem>
-											<SelectItem value="5">Chennai</SelectItem>
-											<SelectItem value="6">Kolkata</SelectItem>
-											<SelectItem value="7">Pune</SelectItem>
-											<SelectItem value="8">Ahmedabad</SelectItem>
-											<SelectItem value="9">Jaipur</SelectItem>
-											<SelectItem value="10">Lucknow</SelectItem>
-										</SelectContent>
-									</Select>
-
-								</div>
+							<div>
+								<Label htmlFor="banner">Upload banner</Label>
+								<Input
+									type="file"
+									id="banner"
+									placeholder="upload image"
+									value={formData.banner}
+									onChange={(e) => setFormData({ ...formData, banner: e.target.value })}
+								/>
 							</div>
 
 							<div>

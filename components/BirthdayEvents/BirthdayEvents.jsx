@@ -88,10 +88,10 @@ export default function BirthdayEvents() {
 						<Gift className="mr-2 h-4 w-4" />
 						Create Birthday Event
 					</Button>
-					<Button onClick={handleCreateCuratedEvent} variant="outline">
+					{/* <Button onClick={handleCreateCuratedEvent} variant="outline">
 						<Sparkles className="mr-2 h-4 w-4" />
 						Create Curated Event
-					</Button>
+					</Button> */}
 				</div>
 			</div>
 

@@ -40,7 +40,7 @@ function AddThemes() {
 								<form>
 									<DialogTrigger asChild>
 										<Button ><Plus className="mr-2 h-4 w-4" /> Add Theme</Button>
-									</DialogTrigger>
+									</DialogTrigger> 
 									<DialogContent className="sm:max-w-[425px]">
 										<DialogHeader>
 											<DialogTitle className='text-center'>Add Theme</DialogTitle>
@@ -81,9 +81,6 @@ function AddThemes() {
 									</DialogContent>
 								</form>
 							</Dialog>
-
-
-
 						</div>
 
 					</div>
@@ -126,7 +123,6 @@ function AddThemes() {
 						))}
 					</div>
 				</CardContent>
-
 			</Card>
 		</>
 	)

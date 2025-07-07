@@ -126,7 +126,7 @@ export default function CategoriesManagement() {
           <p className="text-gray-600 dark:text-gray-400">Manage event categories and classifications</p>
         </div>
         <Button onClick={openCreateDialog}>
-          <Plus className="mr-2 h-4 w-4" />
+          <Plus className="mr-2 h-4 w-4 bg-pink-600 hover:bg-pink-700" />
           Add Category
         </Button>
       </div>

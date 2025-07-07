@@ -20,11 +20,11 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={inter.className}>
-        <ReduxProvider>
-          <ThemeProvider attribute="class" defaultTheme="light" enableSystem={true} disableTransitionOnChange={false}>
-            <main >{children}</main>
-          </ThemeProvider>
-        </ReduxProvider>
+        {/* <ReduxProvider> */}
+        <ThemeProvider attribute="class" defaultTheme="light" enableSystem={true} disableTransitionOnChange={false}>
+          <main >{children}</main>
+        </ThemeProvider>
+        {/* </ReduxProvider> */}
       </body>
     </html>
   );
