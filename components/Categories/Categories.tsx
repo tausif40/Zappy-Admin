@@ -74,14 +74,14 @@ const categories = [
   },
 ]
 
-export default function CategoriesManagement() {
+export default function Categories() {
   const [searchTerm, setSearchTerm] = useState("")
   const [dialogOpen, setDialogOpen] = useState(false)
   const [editingCategory, setEditingCategory] = useState<any>(null)
   const [formData, setFormData] = useState({
     name: "",
     description: "",
-    color: "#8B5CF6",
+    image: "",
   })
 
   const filteredCategories = categories.filter(
@@ -98,7 +98,7 @@ export default function CategoriesManagement() {
     }
     setDialogOpen(false)
     setEditingCategory(null)
-    setFormData({ name: "", description: "", color: "#8B5CF6" })
+    setFormData({ name: "", description: "", image: "" })
   }
 
   const openEditDialog = (category: any) => {
@@ -106,14 +106,14 @@ export default function CategoriesManagement() {
     setFormData({
       name: category.name,
       description: category.description,
-      color: category.color,
+      image: category.image,
     })
     setDialogOpen(true)
   }
 
   const openCreateDialog = () => {
     setEditingCategory(null)
-    setFormData({ name: "", description: "", color: "#8B5CF6" })
+    setFormData({ name: "", description: "", image: "" })
     setDialogOpen(true)
   }
 
@@ -125,8 +125,8 @@ export default function CategoriesManagement() {
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white">Event Categories</h1>
           <p className="text-gray-600 dark:text-gray-400">Manage event categories and classifications</p>
         </div>
-        <Button onClick={openCreateDialog}>
-          <Plus className="mr-2 h-4 w-4 bg-pink-600 hover:bg-pink-700" />
+        <Button onClick={openCreateDialog} className="bg-pink-600 hover:bg-pink-700">
+          <Plus className="mr-2 h-4 w-4 " />
           Add Category
         </Button>
       </div>
@@ -289,20 +289,20 @@ export default function CategoriesManagement() {
               />
             </div>
             <div>
-              <Label htmlFor="color">Category Color</Label>
+              <Label htmlFor="color">Category Icon</Label>
               <div className="flex items-center space-x-3">
                 <Input
                   id="color"
-                  type="color"
-                  value={formData.color}
-                  onChange={(e) => setFormData({ ...formData, color: e.target.value })}
-                  className="w-16 h-10"
+                  type="file"
+                  accept="image/*"
+                  value={formData.image}
+                  onChange={(e) => setFormData({ ...formData, image: e.target.value })}
                 />
-                <Input
+                {/* <Input
                   value={formData.color}
                   onChange={(e) => setFormData({ ...formData, color: e.target.value })}
                   placeholder="#8B5CF6"
-                />
+                /> */}
               </div>
             </div>
           </div>
@@ -314,6 +314,6 @@ export default function CategoriesManagement() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-    </div>
+    </div >
   )
 }
