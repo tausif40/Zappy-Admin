@@ -18,30 +18,30 @@ export default function AdminSettings() {
     siteUrl: 'https://zappy.com',
     contactEmail: 'admin@zappy.com',
     supportEmail: 'support@zappy.com',
-    
+
     // Features
     userRegistration: true,
     vendorRegistration: true,
     eventApproval: true,
     autoVerification: false,
     guestBooking: true,
-    
+
     // Notifications
     emailNotifications: true,
     smsNotifications: false,
     pushNotifications: true,
     adminAlerts: true,
-    
+
     // Payment
     commissionRate: 10,
     minimumPayout: 100,
     paymentMethods: ['stripe', 'paypal'],
-    
+
     // Security
     twoFactorAuth: true,
     sessionTimeout: 30,
     passwordPolicy: 'strong',
-    
+
     // Maintenance
     maintenanceMode: false,
     maintenanceMessage: 'We are currently performing scheduled maintenance. Please check back soon.'
@@ -105,7 +105,7 @@ export default function AdminSettings() {
                   />
                 </div>
               </div>
-              
+
               <div>
                 <Label htmlFor="siteDescription">Site Description</Label>
                 <Textarea

@@ -9,29 +9,53 @@ import { Input } from "@/components/ui/input"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription } from "@/components/ui/alert"
-import { Eye, EyeOff, Shield } from "lucide-react"
+import { ArrowRight, Eye, EyeOff, LoaderCircle, Shield } from "lucide-react"
+import { useDispatch } from "react-redux"
+import type { AppDispatch } from "@/store/store"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
+import { loginSchema } from "@/schema/userSchema"
+import type { z } from "zod"
+import Cookies from 'js-cookie';
+import { adminLogin } from "@/store/features/auth-slice"
+import { useToast } from "@/hooks/use-toast"
 
 export default function Login() {
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  const { toast } = useToast();
+  const route = useRouter();
+  const dispatch = useDispatch<AppDispatch>();
   const [showPassword, setShowPassword] = useState(false)
-  const [error, setError] = useState("")
   const [isLoading, setIsLoading] = useState(false)
-  const router = useRouter()
+  const [error, setError] = useState("")
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setIsLoading(true)
-    setError("")
 
-    // Simulate admin authentication
-    if (email === "admin@zappy.com" && password === "admin123") {
-      localStorage.setItem("adminAuth", "true")
-      router.push("/dashboard")
-    } else {
-      setError("Invalid admin credentials")
+  type LoginForm = z.infer<typeof loginSchema>;
+
+  const {
+    register,
+    handleSubmit,
+    formState: { errors }
+  } = useForm<LoginForm>({ resolver: zodResolver(loginSchema) })
+
+  const onSubmit = async (data: LoginForm) => {
+    console.log(data);
+    try {
+      setIsLoading(true);
+      const res = await dispatch(adminLogin(data)).unwrap();
+      console.log(res);
+      if (res.status === 200) {
+        Cookies.set("token", res.data.accessToken);
+        route.push("/dashboard");
+        toast({ variant: "success", title: "Login Successful!" });
+      } else {
+        throw new Error(res.data.message || "Login failed. Please try again.");
+      }
+    } catch (error: any) {
+      console.log("Error logging in: ", error);
+      toast({ variant: "destructive", title: "Login failed!", description: error?.message || "Something went wrong. Please try again." });
+    } finally {
+      setIsLoading(false);
     }
-    setIsLoading(false)
   }
 
   return (
@@ -45,28 +69,24 @@ export default function Login() {
           <CardDescription>Access the Zappy administration panel</CardDescription>
         </CardHeader>
         <CardContent>
-          <form onSubmit={handleSubmit} className="space-y-4">
+          <form onSubmit={handleSubmit(onSubmit)} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="email">Email</Label>
               <Input
+                {...register("email")}
                 id="email"
                 type="email"
-                placeholder="admin@zappy.com"
-                value={email}
-                onChange={(e) => { setEmail(e.target.value); setError('') }}
-                required
+                placeholder="example@gmail.com"
               />
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
               <div className="relative">
                 <Input
+                  {...register("password")}
                   id="password"
                   type={showPassword ? "text" : "password"}
                   placeholder="Enter admin password"
-                  value={password}
-                  onChange={(e) => { setPassword(e.target.value); setError('') }}
-                  required
                 />
                 <Button
                   type="button"
@@ -84,17 +104,17 @@ export default function Login() {
                 <AlertDescription>{error}</AlertDescription>
               </Alert>
             )}
-            <Button type="submit" className="w-full" disabled={isLoading}>
-              {isLoading ? "Signing in..." : "Sign In"}
+            <Button type="submit" className="w-full" disabled={isLoading}>LogIn
+              {isLoading ? <LoaderCircle className='animate-spin h-4 w-4 ml-2' /> : <ArrowRight className="ml-2 h-4 w-4" />}
             </Button>
           </form>
           <div className="mt-4 p-3 bg-blue-50 dark:bg-blue-900/20 rounded-lg">
             <p className="text-sm text-blue-700 dark:text-blue-300">
               <strong>Demo Credentials:</strong>
               <br />
-              Email: admin@zappy.com
+              Email: admin@gmail.com
               <br />
-              Password: admin123
+              Password: 12345678
             </p>
           </div>
         </CardContent>
