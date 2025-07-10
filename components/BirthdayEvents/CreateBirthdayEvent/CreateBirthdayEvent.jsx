@@ -68,16 +68,6 @@ const tags = [
 	"Budget Friendly",
 	"Creative Pick",
 	"Party Vibe",
-	"No tag",
-	"Birthday Parties",
-	"Themed Events",
-	"New Arrival",
-	"Top Rated",
-	"Educational",
-	"Budget Friendly",
-	"Creative Pick",
-	"Party Vibe",
-
 ]
 
 export default function CreateBirthdayEvent() {
@@ -477,7 +467,7 @@ export default function CreateBirthdayEvent() {
 							<Button variant="outline" size='sm'><Plus className="h-4 w-4" /> Add</Button>
 						</CardHeader>
 						<CardContent>
-							<ScrollArea className="h-52 p-3 rounded-md border">
+							<ScrollArea className="max-h-52 p-3 rounded-md border">
 								<RadioGroup className="grid grid-cols-2 gap-4">
 									{tags.map((option) => (
 										<div key={option} className="flex gap-2 items-center text-muted-foreground">
