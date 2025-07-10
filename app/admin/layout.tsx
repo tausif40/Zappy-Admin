@@ -1,32 +1,11 @@
-import type React from "react"
-import { SideNavbar } from "@/components/Navbar/SideNavbar"
-import { cn } from "@/lib/utils"
+import React from "react"
+import AdminLayoutPage from "@/components/Layout/AdminLayoutPage"
 
-export default function AdminLayout({
-  children,
-}: {
-  children: React.ReactNode
-}) {
-  const isCollapsed = false
+export default function AdminLayout({ children }: { children: React.ReactNode }) {
 
   return (
     <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <SideNavbar />
-
-      {/* Main Content */}
-      <div
-        className={cn(
-          "transition-all duration-300",
-          "md:pl-64",
-          isCollapsed && "md:pl-20",
-        )}
-      >
-        <div className="pt-16 md:pt-0">
-          {" "}
-          {/* Mobile top padding */}
-          <main className="p-6">{children}</main>
-        </div>
-      </div>
+      <AdminLayoutPage>{children}</AdminLayoutPage>
     </div>
   )
 }

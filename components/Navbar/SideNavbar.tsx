@@ -9,7 +9,6 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
 import { LayoutDashboard, Users, Store, Calendar, Gift, Sparkles, Tags, Star, CheckCircle, Settings, CreditCard, DollarSign, Menu, Bell, User, LogOut, ChevronLeft, ChevronRight, Moon, Sun, Monitor, PackagePlus, Palette } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { ScrollArea } from "../ui/scroll-area"
-import { useState } from "react"
 import Cookies from 'js-cookie';
 
 const navigation = [
@@ -29,11 +28,15 @@ const navigation = [
 	{ name: "Earnings", href: "/admin/earnings", icon: DollarSign },
 ]
 
-export function SideNavbar() {
+interface AdminNavbarProps {
+	isCollapsed: boolean
+	setIsCollapsed: (collapsed: boolean) => void
+}
+
+export function SideNavbar({ isCollapsed, setIsCollapsed }: AdminNavbarProps) {
 	const pathname = usePathname()
 	const router = useRouter()
 	const { theme, setTheme } = useTheme()
-	const [isCollapsed, setIsCollapsed] = useState(false)
 
 	const handleLogout = () => {
 		Object.keys(Cookies.get()).forEach(cookieName => {
@@ -47,8 +50,7 @@ export function SideNavbar() {
 			{/* Desktop Sidebar */}
 			<div
 				className={cn(
-					"relative hidden md:flex md:flex-col md:fixed md:inset-y-0 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 transition-all duration-300",
-					isCollapsed ? "md:w-20" : "md:w-64",
+					"relative hidden md:flex md:flex-col md:fixed md:inset-y-0 bg-white dark:bg-gray-900 border-r border-gray-200 dark:border-gray-700 transition-all duration-300", isCollapsed ? "md:w-20" : "md:w-64",
 				)}
 			>
 				{/* Header */}
