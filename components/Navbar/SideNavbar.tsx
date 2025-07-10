@@ -13,20 +13,20 @@ import { useState } from "react"
 import Cookies from 'js-cookie';
 
 const navigation = [
-	{ name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
-	{ name: "Users", href: "/users", icon: Users },
-	{ name: "Vendors", href: "/vendors", icon: Store },
-	{ name: "Events", href: "/events", icon: Calendar },
-	{ name: "Birthday Events", href: "/birthday-events", icon: Gift },
-	{ name: "Curated Events", href: "/curated-events", icon: Sparkles },
-	{ name: "Categories", href: "/categories", icon: Tags },
-	{ name: "Add Ons", href: "/add-ons", icon: PackagePlus },
-	{ name: "Create Theme", href: "/create-theme", icon: Palette },
-	{ name: "Testimonials", href: "/testimonials", icon: Star },
-	{ name: "Verification", href: "/verification", icon: CheckCircle, badge: "3" },
-	{ name: "Settings", href: "/settings", icon: Settings },
-	{ name: "Payments", href: "/payments", icon: CreditCard },
-	{ name: "Earnings", href: "/earnings", icon: DollarSign },
+	{ name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
+	{ name: "Users", href: "/admin/users", icon: Users },
+	{ name: "Vendors", href: "/admin/vendors", icon: Store },
+	{ name: "Events", href: "/admin/events", icon: Calendar },
+	{ name: "Birthday Events", href: "/admin/birthday-events", icon: Gift },
+	{ name: "Curated Events", href: "/admin/curated-events", icon: Sparkles },
+	{ name: "Categories", href: "/admin/categories", icon: Tags },
+	{ name: "Add Ons", href: "/admin/add-ons", icon: PackagePlus },
+	{ name: "Create Theme", href: "/admin/create-theme", icon: Palette },
+	{ name: "Testimonials", href: "/admin/testimonials", icon: Star },
+	{ name: "Verification", href: "/admin/verification", icon: CheckCircle, badge: "3" },
+	{ name: "Settings", href: "/admin/settings", icon: Settings },
+	{ name: "Payments", href: "/admin/payments", icon: CreditCard },
+	{ name: "Earnings", href: "/admin/earnings", icon: DollarSign },
 ]
 
 export function SideNavbar() {

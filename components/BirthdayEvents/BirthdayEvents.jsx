@@ -67,11 +67,11 @@ export default function BirthdayEvents() {
 	const [ eventDialogOpen, setEventDialogOpen ] = useState(true)
 
 	const handleCreateBirthdayEvent = () => {
-		router.push("/birthday-events/create")
+		router.push("/admin/birthday-events/create")
 	}
 
 	const handleCreateCuratedEvent = () => {
-		router.push("/curated-events/create")
+		router.push("/admin/curated-events/create")
 	}
 
 

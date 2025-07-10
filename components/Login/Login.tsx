@@ -45,7 +45,7 @@ export default function Login() {
       console.log(res);
       if (res.status === 200) {
         Cookies.set("token", res.data.accessToken);
-        route.push("/dashboard");
+        route.push("/admin/dashboard");
         toast({ variant: "success", title: "Login Successful!" });
       } else {
         throw new Error(res.data.message || "Login failed. Please try again.");
