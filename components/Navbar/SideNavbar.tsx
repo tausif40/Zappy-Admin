@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet"
 import { Badge } from "@/components/ui/badge"
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger, } from "@/components/ui/dropdown-menu"
-import { LayoutDashboard, Users, Store, Calendar, Gift, Sparkles, Tags, Star, CheckCircle, Settings, CreditCard, DollarSign, Menu, Bell, User, LogOut, ChevronLeft, ChevronRight, Moon, Sun, Monitor, PackagePlus, Palette } from "lucide-react"
+import { LayoutDashboard, Users, Store, Calendar, Gift, Sparkles, Tags, Star, CheckCircle, Settings, CreditCard, DollarSign, Menu, Bell, User, LogOut, ChevronLeft, ChevronRight, Moon, Sun, Monitor, PackagePlus, Palette, ListPlus } from "lucide-react"
 import { cn } from "@/lib/utils"
 import { ScrollArea } from "../ui/scroll-area"
 import Cookies from 'js-cookie';
@@ -23,9 +23,10 @@ const navigation = [
 	{ name: "Create Theme", href: "/admin/create-theme", icon: Palette },
 	{ name: "Testimonials", href: "/admin/testimonials", icon: Star },
 	{ name: "Verification", href: "/admin/verification", icon: CheckCircle, badge: "3" },
-	{ name: "Settings", href: "/admin/settings", icon: Settings },
 	{ name: "Payments", href: "/admin/payments", icon: CreditCard },
 	{ name: "Earnings", href: "/admin/earnings", icon: DollarSign },
+	{ name: "Add Options", href: "/admin/add-options", icon: ListPlus },
+	{ name: "Settings", href: "/admin/settings", icon: Settings },
 ]
 
 interface AdminNavbarProps {

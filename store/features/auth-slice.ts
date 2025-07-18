@@ -2,19 +2,17 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import apiClient from "@/lib/apiClient";
 
 // Login User
-export const adminLogin = createAsyncThunk(
-	"auth/adminLogin",
-	async (credentials, thunkAPI) => {
-		try {
-			const response = await apiClient.post("/admin/login", credentials);
-			console.log(response);
+export const adminLogin = createAsyncThunk("auth/adminLogin", async (credentials, thunkAPI) => {
+	try {
+		const response = await apiClient.post("/admin/login", credentials);
+		console.log(response);
 
-			return { status: response.status, data: response.data };
-		} catch (error: any) {
-			console.log(error);
-			return thunkAPI.rejectWithValue(error);
-		}
+		return { status: response.status, data: response.data };
+	} catch (error: any) {
+		console.log(error);
+		return thunkAPI.rejectWithValue(error);
 	}
+}
 );
 
 interface AuthState {
