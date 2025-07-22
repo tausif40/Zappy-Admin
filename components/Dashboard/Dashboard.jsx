@@ -120,7 +120,7 @@ export default function Dashboard() {
 			<div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
 				{stats.map((stat, index) => (
 					<Link key={stat.title} href={stat.href}>
-						<Card className={`border-l-4 ${statsColors[ index % statsColors.length ].bg} ${statsColors[ index % statsColors.length ].border}  hover:shadow-lg transition-shadow cursor-pointer`}>
+						<Card className={`border-0 ${statsColors[ index % statsColors.length ].bg}  hover:shadow-md transition-shadow cursor-pointer`}>
 							<CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
 								<CardTitle className="text-sm font-medium text-gray-600 dark:text-gray-400">{stat.title}</CardTitle>
 								<stat.icon className="h-4 w-4 text-gray-600 dark:text-gray-400" />

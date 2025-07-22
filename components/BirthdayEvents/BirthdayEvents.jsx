@@ -142,20 +142,21 @@ export default function BirthdayEvents() {
 			</div>
 
 			{/* Tabs */}
-			<Tabs defaultValue="events" className="space-y-6 ">
+			{/* <Tabs defaultValue="events" className="space-y-6 ">
 				<TabsList className="bg-pink-100">
 					<TabsTrigger value="events">Events</TabsTrigger>
 					<TabsTrigger value="themes">Themes</TabsTrigger>
 				</TabsList>
 
 				<TabsContent value="events" className="space-y-6">
-					<EventDetails />
 				</TabsContent>
 
 				<TabsContent value="themes" className="space-y-6">
 					<AddThemes />
 				</TabsContent>
-			</Tabs>
+			</Tabs> */}
+
+			<EventDetails />
 
 			{/* Event Details Dialog */}
 			{/* <Dialog open={eventDialogOpen} onOpenChange={setEventDialogOpen}>

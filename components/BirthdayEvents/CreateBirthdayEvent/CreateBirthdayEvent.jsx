@@ -10,7 +10,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Badge } from "@/components/ui/badge"
-import { ArrowLeft, Plus, X, Upload, Eye, CircleCheckBig, Dot } from "lucide-react"
+import { ArrowLeft, Plus, X, Upload, Eye, CircleCheckBig, Dot, Trash2 } from "lucide-react"
 import { Dialog, DialogTrigger, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog'
 import { Checkbox } from '@/components/ui/checkbox'
 import { ScrollArea } from '@/components/ui/scroll-area'
@@ -37,7 +37,6 @@ const city = [
 	{ _id: 9, name: "Jaipur" },
 	{ _id: 10, name: "Lucknow" }
 ]
-
 
 const allOptions = [
 	'React',
@@ -81,50 +80,81 @@ export default function CreateBirthdayEvent() {
 		ageGroup: "",
 		guests: "",
 		duration: "",
-		price: "",
+		tags: "",
 		banner: "",
 		description: "",
 		highlights: [ "" ],
 		includes: [ "" ],
 		policies: [ "" ],
 		location: [ "" ],
+		discount: "",
 		isActive: true,
+		coreActivities: [ "" ], // Added coreActivities field
 	})
 
-	const [ previewMode, setPreviewMode ] = useState(false)
+	const [ packages, setPackages ] = useState({
+		silver: { name: "Silver (Basic)", price: 0, features: [ "" ] },
+		gold: { name: "Gold (Enhanced)", price: 0, features: [ "" ] },
+		platinum: { name: "Platinum (Premium)", price: 0, features: [ "" ] },
+	})
 
-	const filteredOptions = allOptions.filter(option =>
-		option.toLowerCase().includes(searchTerm.toLowerCase())
-	)
-
-	const toggleOption = (value) => {
-		setSelectedOptions(prev =>
-			prev.includes(value) ? prev.filter(v => v !== value) : [ ...prev, value ]
-		)
-	}
-	console.log('formData location:', formData.location)
-	// console.log('Selected Options:', selectedOptions)
-
-	const handleConfirm = () => {
-		console.log('Selected Options:', selectedOptions)
-		setShowResults(true)
+	const handlePackageChange = (packageType, field, value) => {
+		setPackages((prev) => ({
+			...prev,
+			[ packageType ]: { ...prev[ packageType ], [ field ]: value },
+		}))
 	}
 
-	const handleRemoveItem = (field, index) => {
-		const newItems = formData[ field ].filter((_, i) => i !== index)
-		setFormData({
-			...formData,
-			[ field ]: newItems,
-		})
+	const handlePackageFeatureChange = (packageType, index, value) => {
+		setPackages((prev) => ({
+			...prev,
+			[ packageType ]: {
+				...prev[ packageType ],
+				features: prev[ packageType ].features.map((feature, i) => (i === index ? value : feature)),
+			},
+		}))
 	}
 
-	const handleItemChange = (field, index, value) => {
-		const newItems = [ ...formData[ field ] ]
-		newItems[ index ] = value
-		setFormData({
-			...formData,
-			[ field ]: newItems,
-		})
+	const addPackageFeature = (packageType) => {
+		setPackages((prev) => ({
+			...prev,
+			[ packageType ]: {
+				...prev[ packageType ],
+				features: [ ...prev[ packageType ].features, "" ],
+			},
+		}))
+	}
+
+	const removePackageFeature = (packageType, index) => {
+		setPackages((prev) => ({
+			...prev,
+			[ packageType ]: {
+				...prev[ packageType ],
+				features: prev[ packageType ].features.filter((_, i) => i !== index),
+			},
+		}))
+	}
+
+	// Core Activities handlers
+	const handleCoreActivityChange = (index, value) => {
+		setFormData((prev) => ({
+			...prev,
+			coreActivities: prev.coreActivities.map((activity, i) => (i === index ? value : activity)),
+		}))
+	}
+
+	const addCoreActivity = () => {
+		setFormData((prev) => ({
+			...prev,
+			coreActivities: [ ...prev.coreActivities, "" ],
+		}))
+	}
+
+	const removeCoreActivity = (index) => {
+		setFormData((prev) => ({
+			...prev,
+			coreActivities: prev.coreActivities.filter((_, i) => i !== index),
+		}))
 	}
 
 	const handleSubmit = () => {
@@ -132,15 +162,13 @@ export default function CreateBirthdayEvent() {
 		router.push("/admin/dashboard/birthday-events")
 	}
 
-	const handleMultiSelectChange = (name, selectedItems) => {
-		setFormData((prevFormData) => ({ ...prevFormData, [ name ]: selectedItems }));
-
-		// setErrors((prevErrors) => ({
-		// 	...prevErrors, [ name ]: ''
-		// }));
-	};
-
 	const selectedTheme = themes.find((t) => t.value === formData.theme)
+
+	const packageBorderColors = {
+		silver: "border-ring bg-purple-50/20",
+		gold: "border-yellow-400 bg-yellow-50/20",
+		platinum: "border-teal-400 bg-teal-50/20",
+	}
 
 	return (
 		<div className="min-h-screen space-y-6">
@@ -179,7 +207,7 @@ export default function CreateBirthdayEvent() {
 						</CardHeader>
 						<CardContent className="space-y-4">
 							<div>
-								<Label htmlFor="title">Event Title</Label>
+								<Label htmlFor="title" className="required">Event Title</Label>
 								<Input
 									id="title"
 									placeholder="e.g., Princess Birthday Party"
@@ -190,7 +218,7 @@ export default function CreateBirthdayEvent() {
 
 							<div className="grid grid-cols-2 gap-4">
 								<div>
-									<Label htmlFor="ageGroup">Age Group</Label>
+									<Label htmlFor="ageGroup" className="required">Age Group</Label>
 									<Input
 										id="ageGroup"
 										placeholder="e.g., 3-8 years"
@@ -199,7 +227,7 @@ export default function CreateBirthdayEvent() {
 									/>
 								</div>
 								<div>
-									<Label htmlFor="guests">Max Guests</Label>
+									<Label htmlFor="guests" className="required">Max Guests</Label>
 									<Input
 										id="guests"
 										placeholder="e.g., 10-15 guests"
@@ -212,7 +240,7 @@ export default function CreateBirthdayEvent() {
 
 							<div className="grid grid-cols-2 gap-4">
 								<div>
-									<Label htmlFor="duration">Duration</Label>
+									<Label htmlFor="duration" className="required">Duration</Label>
 									<Input
 										id="duration"
 										placeholder="e.g., 3 hours"
@@ -221,20 +249,20 @@ export default function CreateBirthdayEvent() {
 									/>
 								</div>
 								<div>
-									<Label htmlFor="price">Price</Label>
+									<Label htmlFor="tags">Add Tags <span className="text-xs text-gray-500">(It will show top of card)</span></Label>
 									<Input
-										id="price"
-										type="number"
-										placeholder="299"
-										value={formData.price}
-										onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+										id="tags"
+										type="text"
+										placeholder="New Arrival"
+										value={formData.tags}
+										onChange={(e) => setFormData({ ...formData, tags: e.target.value })}
 									/>
 								</div>
 							</div>
 
 							<div className="grid grid-cols-2 gap-4">
 								<div>
-									<Label htmlFor="banner">Upload banner</Label>
+									<Label htmlFor="banner" className="required">Upload banner</Label>
 									<Input
 										type="file"
 										id="banner"
@@ -244,7 +272,7 @@ export default function CreateBirthdayEvent() {
 									/>
 								</div>
 								<div className-='w-full'>
-									<Label htmlFor="location">Locations</Label>
+									<Label htmlFor="location" className="required">Locations</Label>
 									{/* <Input
 										id="location"
 										type="text"
@@ -274,7 +302,7 @@ export default function CreateBirthdayEvent() {
 							</div>
 
 							<div>
-								<Label htmlFor="description">Description</Label>
+							<Label htmlFor="description" className="required">Description</Label>
 								<Textarea
 									id="description"
 									placeholder="Describe the birthday event experience..."
@@ -283,17 +311,81 @@ export default function CreateBirthdayEvent() {
 									rows={4}
 								/>
 							</div>
+
+							<div>
+								<Label htmlFor="discount">Discount (%) <span className="text-sm text-gray-500">(optional)</span></Label>
+								<Input
+									type="number"
+									id="discount"
+									placeholder="percent"
+									value={formData.discount}
+									onChange={(e) => setFormData({ ...formData, discount: e.target.value })}
+								/>
+							</div>
+
+							<div>
+								<Label className="required">Core Activities</Label>
+								<div className="space-y-2 mt-2">
+									{formData.coreActivities.map((activity, index) => (
+										<div key={index} className="flex items-center space-x-2">
+											<Input
+												value={activity}
+												onChange={(e) => handleCoreActivityChange(index, e.target.value)}
+												placeholder="Enter activity"
+											/>
+											<Button
+												type="button"
+												variant="outline"
+												size="sm"
+												onClick={() => removeCoreActivity(index)}
+												disabled={formData.coreActivities.length === 1}
+											>
+												<Trash2 className="h-4 w-4 text-red-500" />
+											</Button>
+										</div>
+									))}
+									<Button type="button" variant="outline" size="sm" onClick={addCoreActivity}>
+										<Plus className="h-4 w-4 mr-2" />
+										Add Activity
+									</Button>
+								</div>
+							</div>
 						</CardContent>
 					</Card>
 
+
+					{/* Tags */}
+					{/* <Card className="shadow">
+						<CardHeader className="flex flex-row justify-between items-start">
+							<div>
+								<CardTitle >Add Tags</CardTitle>
+								<CardDescription>It will show top of card</CardDescription>
+							</div>
+							<Button variant="outline" size='sm'><Plus className="h-4 w-4" /> Add</Button>
+						</CardHeader>
+						<CardContent>
+							<ScrollArea className="max-h-52 p-3 rounded-md border">
+								<RadioGroup className="grid grid-cols-2 gap-4">
+									{tags.map((option) => (
+										<div key={option} className="flex gap-2 items-center text-muted-foreground">
+											<RadioGroupItem value={option} id={option} />
+											<Label htmlFor={option}>{option}</Label>
+										</div>
+									))}
+								</RadioGroup>
+							</ScrollArea>
+						</CardContent>
+					</Card> */}
+
+
 					{/* Event Details */}
-					<Card>
+					{/* <Card>
 						<CardHeader>
 							<CardTitle>Event Details</CardTitle>
 							<CardDescription>Add highlights, inclusions, and policies</CardDescription>
 						</CardHeader>
 						<CardContent className="space-y-6">
-							{/* Highlights */}
+
 							<div className="space-y-2">
 								<Dialog>
 									<div className="flex items-center justify-between mb-3">
@@ -346,14 +438,7 @@ export default function CreateBirthdayEvent() {
 
 							</div>
 
-							{/* Includes */}
-							{/* <div className="flex items-center justify-between mb-3">
-									<Label>Includes</Label>
-									<Button size="sm" variant="outline" onClick={() => handleAddItem("includes")}>
-										<Plus className="h-4 w-4 mr-1" />
-										Add
-									</Button>
-								</div> */}
+
 							<div className="space-y-2">
 								<Dialog>
 									<div className="flex items-center justify-between mb-3">
@@ -404,7 +489,6 @@ export default function CreateBirthdayEvent() {
 								</Card>
 							</div>
 
-							{/* Policies */}
 							<div>
 								<Dialog>
 									<div className="flex items-center justify-between mb-3">
@@ -455,45 +539,68 @@ export default function CreateBirthdayEvent() {
 								</Card>
 							</div>
 						</CardContent>
-					</Card>
+					</Card> */}
 
-					{/* Tags */}
-					<Card className="shadow">
-						<CardHeader className="flex flex-row justify-between items-start">
-							<div>
-								<CardTitle >Add Tags</CardTitle>
-								<CardDescription>It will show top of card</CardDescription>
-							</div>
-							<Button variant="outline" size='sm'><Plus className="h-4 w-4" /> Add</Button>
-						</CardHeader>
-						<CardContent>
-							<ScrollArea className="max-h-52 p-3 rounded-md border">
-								<RadioGroup className="grid grid-cols-2 gap-4">
-									{tags.map((option) => (
-										<div key={option} className="flex gap-2 items-center text-muted-foreground">
-											<RadioGroupItem value={option} id={option} />
-											<Label htmlFor={option}>{option}</Label>
-										</div>
-									))}
-								</RadioGroup>
-							</ScrollArea>
-						</CardContent>
-					</Card>
-
+					{/* Package Configuration */}
 					<Card>
 						<CardHeader>
-							<CardTitle>Discount (Optional)</CardTitle>
-							<CardDescription>Add discount offer</CardDescription>
+							<CardTitle>Package Configuration</CardTitle>
+							<CardDescription>Set up your Silver, Gold, and Platinum packages</CardDescription>
 						</CardHeader>
-						<CardContent>
-							<div>
-								<Label htmlFor="discount">Discount (%)</Label>
-								<Input
-									type="number"
-									id="discount"
-									placeholder="percent"
-								/>
-							</div>
+						<CardContent className="space-y-6">
+							{Object.entries(packages).map(([ packageType, packageData ]) => (
+								<div key={packageType} className={`border rounded-lg p-4 ${packageBorderColors[ packageType ] || "border-gray-300"}`}>
+									<h4 className="font-semibold mb-4 capitalize">{packageType} Package</h4>
+									<div className="grid md:grid-cols-2 gap-4 mb-4">
+										<div>
+											<Label htmlFor={`${packageType}-name`}>Package Name</Label>
+											<Input
+												id={`${packageType}-name`}
+												value={packageData.name}
+												onChange={(e) => handlePackageChange(packageType, "name", e.target.value)}
+												placeholder="Package name"
+											/>
+										</div>
+										<div>
+											<Label htmlFor={`${packageType}-price`}>Price ($)</Label>
+											<Input
+												id={`${packageType}-price`}
+												type="number"
+												value={packageData.price}
+												onChange={(e) => handlePackageChange(packageType, "price", Number.parseInt(e.target.value) || 0)}
+												placeholder="Package price"
+											/>
+										</div>
+									</div>
+									<div>
+										<Label>Features</Label>
+										<div className="space-y-2 mt-2">
+											{packageData.features.map((feature, index) => (
+												<div key={index} className="flex items-center space-x-2">
+													<Input
+														value={feature}
+														onChange={(e) => handlePackageFeatureChange(packageType, index, e.target.value)}
+														placeholder="Enter feature"
+													/>
+													<Button
+														type="button"
+														variant="outline"
+														size="sm"
+														onClick={() => removePackageFeature(packageType, index)}
+														disabled={packageData.features.length === 1}
+													>
+														<Trash2 className="h-4 w-4 text-red-500" />
+													</Button>
+												</div>
+											))}
+											<Button type="button" variant="outline" size="sm" onClick={() => addPackageFeature(packageType)}>
+												<Plus className="h-4 w-4 mr-2" />
+												Add Feature
+											</Button>
+										</div>
+									</div>
+								</div>
+							))}
 						</CardContent>
 					</Card>
 
@@ -502,6 +609,7 @@ export default function CreateBirthdayEvent() {
 							Create
 						</Button>
 					</div>
+
 				</div>
 
 				{/* Preview */}
@@ -546,11 +654,11 @@ export default function CreateBirthdayEvent() {
 									</div>
 								</div>
 
-								{formData.price && (
+								{/* {formData.tags && (
 									<div className="text-center py-2">
-										<span className="text-2xl font-bold text-green-600">${formData.price}</span>
+										<span className="text-2xl font-bold text-green-600">${formData.tags}</span>
 									</div>
-								)}
+								)} */}
 
 								{formData.description && (
 									<div>

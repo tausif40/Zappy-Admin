@@ -78,6 +78,12 @@
 	}
 }
 
+label.required::after {
+  content: " *";
+  color: red;
+  margin-left: 0.1rem;
+}
+
 /* Custom animations */
 @keyframes float {
 	0%,
