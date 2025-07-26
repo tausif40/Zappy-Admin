@@ -78,10 +78,10 @@
 	}
 }
 
-label.required::after {
-  content: " *";
-  color: red;
-  margin-left: 0.1rem;
+.required::after {
+	content: " *";
+	color: red;
+	margin-left: 0.1rem;
 }
 
 /* Custom animations */

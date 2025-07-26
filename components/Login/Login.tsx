@@ -2,7 +2,7 @@
 
 import type React from "react"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -26,16 +26,27 @@ export default function Login() {
   const dispatch = useDispatch<AppDispatch>();
   const [showPassword, setShowPassword] = useState(false)
   const [isLoading, setIsLoading] = useState(false)
-  const [error, setError] = useState("")
-
+  const [serverError, setServerError] = useState("");
 
   type LoginForm = z.infer<typeof loginSchema>;
 
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors }
   } = useForm<LoginForm>({ resolver: zodResolver(loginSchema) })
+
+  const email = watch("email");
+  const password = watch("password");
+
+  useEffect(() => {
+    if (serverError && (email || password)) {
+      setServerError("");
+    }
+  }, [email, password]);
+
+  console.log(errors)
 
   const onSubmit = async (data: LoginForm) => {
     console.log(data);
@@ -52,6 +63,9 @@ export default function Login() {
       }
     } catch (error: any) {
       console.log("Error logging in: ", error);
+      if (error.statusCode === 401) {
+        setServerError("Email and password does not match");
+      }
       toast({ variant: "destructive", title: "Login failed!", description: error?.message || "Something went wrong. Please try again." });
     } finally {
       setIsLoading(false);
@@ -78,6 +92,7 @@ export default function Login() {
                 type="email"
                 placeholder="example@gmail.com"
               />
+              {errors.email && <p className="text-sm text-red-500">{errors.email.message}</p>}
             </div>
             <div className="space-y-2">
               <Label htmlFor="password">Password</Label>
@@ -98,12 +113,9 @@ export default function Login() {
                   {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                 </Button>
               </div>
+              {errors.password && <p className="text-sm text-red-500">{errors.password.message}</p>}
+              {serverError && <p className="text-sm text-red-500">{serverError}</p>}
             </div>
-            {error && (
-              <Alert variant="destructive">
-                <AlertDescription>{error}</AlertDescription>
-              </Alert>
-            )}
             <Button type="submit" className="w-full" disabled={isLoading}>LogIn
               {isLoading ? <LoaderCircle className='animate-spin h-4 w-4 ml-2' /> : <ArrowRight className="ml-2 h-4 w-4" />}
             </Button>

@@ -20,7 +20,6 @@ const navigation = [
 	{ name: "Curated Events", href: "/admin/curated-events", icon: Sparkles },
 	{ name: "Categories", href: "/admin/categories", icon: Tags },
 	{ name: "Add Ons", href: "/admin/add-ons", icon: PackagePlus },
-	{ name: "Create Theme", href: "/admin/create-theme", icon: Palette },
 	{ name: "Testimonials", href: "/admin/testimonials", icon: Star },
 	{ name: "Verification", href: "/admin/verification", icon: CheckCircle, badge: "3" },
 	{ name: "Payments", href: "/admin/payments", icon: CreditCard },
