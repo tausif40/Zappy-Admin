@@ -13,7 +13,6 @@ export const birthdayEventSchema = z.object({
 		invalid_type_error: "city must be a string",
 	}).min(1, "Please select a city"),
 	discount: z.string().optional(),
-	isActive: z.boolean(),
 	banner: z.custom<File[]>().refine((files) => files.length > 0, {
 		message: "Please upload at least one banner image"
 	}),

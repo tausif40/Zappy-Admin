@@ -9,12 +9,13 @@ import { Label } from "@/components/ui/label"
 import { Textarea } from "@/components/ui/textarea"
 import { Switch } from "@/components/ui/switch"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ArrowLeft, Plus, X, Upload, Trash2 } from "lucide-react"
+import { ArrowLeft, Plus, X, Upload, Trash2, LoaderCircle, Image } from "lucide-react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Controller, useFieldArray, useForm } from "react-hook-form"
 import { birthdayEventSchema } from "@/schema/eventSchema"
 import { useDispatch } from "react-redux"
 import { createBirthDayEvent } from "@/store/features/event-slice"
+import { useToast } from "@/hooks/use-toast"
 
 const city = [
 	{ _id: 1, name: "Mumbai" },
@@ -32,6 +33,8 @@ const city = [
 export default function CreateBirthdayEvent() {
 	const dispatch = useDispatch();
 	const router = useRouter()
+	const { toast } = useToast();
+	const [ isLoading, setIsLoading ] = useState(false);
 
 	const {
 		register,
@@ -43,7 +46,6 @@ export default function CreateBirthdayEvent() {
 	} = useForm({
 		resolver: zodResolver(birthdayEventSchema),
 		defaultValues: {
-			isActive: true,
 			city: "",
 			banner: []
 		}
@@ -65,6 +67,8 @@ export default function CreateBirthdayEvent() {
 	}, [])
 
 	const banner = watch("banner") || []
+	const formValue = watch();
+	console.log("Form value: ", formValue)
 
 	const onSubmit = async (data) => {
 		const activePackages = Object.values(packages).filter(pkg => pkg.isActive).map(({ isActive, ...rest }) => rest)
@@ -80,7 +84,7 @@ export default function CreateBirthdayEvent() {
 		formData.append("description", data.description)
 		formData.append("city", data.city)
 		formData.append("discount", data.discount || "")
-		formData.append("isActive", String(data.isActive))
+		// formData.append("isActive", String(data.isActive))
 		data.coreActivity.forEach((act, i) =>
 			formData.append(`coreActivity[${i}]`, act)
 		)
@@ -102,10 +106,17 @@ export default function CreateBirthdayEvent() {
 		}
 
 		try {
+			setIsLoading(true)
 			const res = await dispatch(createBirthDayEvent(formData)).unwrap();
 			console.log(res);
+			if (res.status === 201) {
+				toast({ variant: "success", title: "Event created Successful!" });
+			}
 		} catch (error) {
 			console.log(error);
+			toast({ variant: "destructive", title: error?.message || "Event create failed!" });
+		} finally {
+			setIsLoading(false)
 		}
 
 	}
@@ -458,30 +469,29 @@ export default function CreateBirthdayEvent() {
 					</Card>
 
 					{/* is active */}
-					<div className="border bg-background rounded-lg p-4">
+					{/* <div className="border bg-background rounded-lg p-4">
 						<p className="text-lg text-foreground font-semibold">Is Active</p>
 						<p className="text-sm text-muted-foreground">It will show on the event card</p>
 
 						<div className="flex items-center space-x-2 mt-4">
 							<Label className="text-md text-muted-foreground">Status : </Label>
-							{/* <Switch id="isActive" checked={formData.isActive} onCheckedChange={() => setFormData({ ...formData, isActive: !formData.isActive })} /> */}
 							<Switch
 								checked={watch("isActive")}
 								onCheckedChange={(val) => setValue("isActive", val)}
 							/>
 						</div>
-					</div>
+					</div> */}
 
 					<div className="flex justify-end">
-						<Button type="submit" size='lg' className="text-lg">
-							Create
+						<Button type="submit" size='lg' className="text-lg" disabled={isLoading}>
+							{isLoading ? <>Creating  <LoaderCircle className='animate-spin h-4 w-4 ml-2' /></> : 'Create'}
 						</Button>
 					</div>
 
 				</form>
 
 				{/* Preview */}
-				{/* <div className="space-y-6 sticky top-4 h-96">
+				<div className="space-y-6 sticky top-4 h-96">
 					<Card>
 						<CardHeader>
 							<CardTitle>Event Preview</CardTitle>
@@ -489,27 +499,32 @@ export default function CreateBirthdayEvent() {
 						</CardHeader>
 						<CardContent>
 							<div className="space-y-4">
-							
-								<div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300">
-									<div className="text-center">
-										<Upload className="h-8 w-8 text-gray-400 mx-auto mb-2" />
-										<p className="text-sm text-gray-500">Upload event image</p>
-									</div>
+
+								<div className="aspect-video bg-gray-100 rounded-lg flex items-center justify-center border-2 border-dashed border-gray-300 overflow-hidden">
+									{banner.length > 0
+										? <div className="w-full">
+											<img src={URL.createObjectURL(banner[ 0 ])} className="w-full rounded object-cover border" />
+										</div>
+										: <div className="text-center">
+											<Image className="h-8 w-8 text-gray-400 mx-auto mb-2" />
+											<p className="text-sm text-gray-500">event image</p>
+										</div>
+									}
 								</div>
 								<div className="grid grid-cols-2 gap-2 text-sm">
 									<div>
 										<span className="text-gray-600">Age:</span>
-										<p className="font-medium">{formData.ageGroup || "Not set"}</p>
+										<p className="font-medium">{formValue.ageGroup || "Not set"}</p>
 									</div>
 									<div>
 										<span className="text-gray-600">Duration:</span>
-										<p className="font-medium">{formData.duration || "Not set"}</p>
+										<p className="font-medium">{formValue.duration || "Not set"}</p>
 									</div>
 								</div>
 							</div>
 						</CardContent>
 					</Card>
-				</div> */}
+				</div>
 			</div>
 		</div>
 	)
