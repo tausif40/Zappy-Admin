@@ -5,6 +5,7 @@ export const birthdayEventSchema = z.object({
 	ageGroup: z.enum(["kids", "teens", "adults", "milestone"], {
 		errorMap: () => ({ message: "Please select an age group" })
 	}),
+	subCategory: z.enum(["Popular Among Boys", "Popular Among Girls", "All-time Classics"]).optional(),
 	duration: z.string().min(1, "Duration is required"),
 	tags: z.string().optional(),
 	description: z.string().min(1, "Description is required"),
@@ -18,3 +19,12 @@ export const birthdayEventSchema = z.object({
 	}),
 	coreActivity: z.array(z.string().min(1, "Activity cannot be empty")).min(1, "At least one activity required"),
 })
+	.superRefine((data, ctx) => {
+		if (data.ageGroup === "kids" && !data.subCategory) {
+			ctx.addIssue({
+				path: ["subCategory"],
+				code: z.ZodIssueCode.custom,
+				message: "Please select a subcategory for kids",
+			});
+		}
+	});

@@ -40,7 +40,7 @@ export default function CreateBirthdayEvent() {
 		register,
 		handleSubmit,
 		control,
-		setValue,
+		setValue,	
 		watch,
 		formState: { errors }
 	} = useForm({
@@ -67,18 +67,20 @@ export default function CreateBirthdayEvent() {
 	}, [])
 
 	const banner = watch("banner") || []
+	const ageGroup = watch("ageGroup");
 	const formValue = watch();
 	console.log("Form value: ", formValue)
 
 	const onSubmit = async (data) => {
 		const activePackages = Object.values(packages).filter(pkg => pkg.isActive).map(({ isActive, ...rest }) => rest)
 
-		console.log("Form data:", data)
-		console.log("Filtered Active Packages:", activePackages)
+		// console.log("Form data:", data)
+		// console.log("Filtered Active Packages:", activePackages)
 
 		const formData = new FormData()
 		formData.append("title", data.title)
 		formData.append("ageGroup", data.ageGroup)
+		formData.append("subCategory", data.subCategory)
 		formData.append("duration", data.duration)
 		formData.append("tags", data.tags || "")
 		formData.append("description", data.description)
@@ -93,17 +95,15 @@ export default function CreateBirthdayEvent() {
 		})
 		formData.append("tiers", JSON.stringify(activePackages))
 
-		console.log("FormData ready for backend")
-
-		for (let pair of formData.entries()) {
-			let [ key, value ] = pair;
-			try {
-				const parsed = JSON.parse(value);
-				console.log(`${key}:`, parsed);
-			} catch (e) {
-				console.log(`${key}:`, value);
-			}
-		}
+		// for (let pair of formData.entries()) {
+		// 	let [ key, value ] = pair;
+		// 	try {
+		// 		const parsed = JSON.parse(value);
+		// 		console.log(`${key}:`, parsed);
+		// 	} catch (e) {
+		// 		console.log(`${key}:`, value);
+		// 	}
+		// }
 
 		try {
 			setIsLoading(true)
@@ -200,7 +200,7 @@ export default function CreateBirthdayEvent() {
 								{errors.title && <p className="text-red-500 text-sm">{errors.title.message}</p>}
 							</div>
 
-							<div className="grid grid-cols-2 gap-4">
+							<div className={`grid gap-4 ${ageGroup === "kids" ? ' grid-cols-2' : ' grid-cols-1'}`}>
 								<div>
 									<Label htmlFor="ageGroup" className="required">Age Group</Label>
 									<Select className='w-full' onValueChange={(value) => setValue("ageGroup", value, { shouldValidate: true })}>
@@ -216,17 +216,24 @@ export default function CreateBirthdayEvent() {
 									</Select>
 									{errors.ageGroup && <p className="text-red-500 text-sm">{errors.ageGroup.message}</p>}
 								</div>
-								<div>
-									<Label htmlFor="duration" className="required">Duration <span className="text-sm text-gray-500">(hour)</span></Label>
-									<Input
-										{...register("duration")}
-										type="number"
-										id="duration"
-										placeholder="e.g., 2, 3.5..."
-									/>
-									{errors.duration && (<p className="text-red-500 text-sm">{errors.duration.message}</p>
-									)}
-								</div>
+
+								{ageGroup === "kids" && (
+									<div>
+										<Label htmlFor="subCategory" className="required">Subcategory</Label>
+										<Select onValueChange={(value) => setValue("subCategory", value, { shouldValidate: true })}>
+											<SelectTrigger className="w-full">
+												<SelectValue placeholder="Select Subcategory" />
+											</SelectTrigger>
+											<SelectContent>
+												<SelectItem value="All-time Classics">All-time Classics</SelectItem>
+												<SelectItem value="Popular Among Boys">Popular Among Boys</SelectItem>
+												<SelectItem value="Popular Among Girls">Popular Among Girls</SelectItem>
+											</SelectContent>
+										</Select>
+										{errors.subCategory && <p className="text-red-500 text-sm">{errors.subCategory.message}</p>}
+									</div>
+								)}
+
 							</div>
 
 							<div className="grid grid-cols-2 gap-4">
@@ -251,6 +258,35 @@ export default function CreateBirthdayEvent() {
 							</div>
 
 							<div className="grid grid-cols-2 gap-x-4">
+								<div className='w-full'>
+									<Label htmlFor="city" className="required">City</Label>
+									<Select className='w-full' onValueChange={(value) => setValue("city", value, { shouldValidate: true })}>
+										<SelectTrigger>
+											<SelectValue placeholder="Select a city" />
+										</SelectTrigger>
+										<SelectContent>
+											{city.map((city) => (
+												<SelectItem key={city._id} value={city.name}>{city.name}</SelectItem>
+											))}
+										</SelectContent>
+									</Select>
+									{errors.city && (<p className="text-red-500 text-sm">{errors.city.message}</p>)}
+								</div>
+
+								<div>
+									<Label htmlFor="duration" className="required">Duration <span className="text-sm text-gray-500">(hour)</span></Label>
+									<Input
+										{...register("duration")}
+										type="number"
+										id="duration"
+										placeholder="e.g., 2, 3.5..."
+									/>
+									{errors.duration && (<p className="text-red-500 text-sm">{errors.duration.message}</p>
+									)}
+								</div>
+							</div>
+
+							<div className="">
 								<div>
 									<Label htmlFor="banner" className="required">Upload banner</Label>
 									<Controller
@@ -272,23 +308,8 @@ export default function CreateBirthdayEvent() {
 									/>
 									{errors.banner && (<p className="text-red-500 text-sm">{errors.banner.message}</p>)}
 								</div>
-								<div className='w-full'>
-									<Label htmlFor="city" className="required">City</Label>
-									<Select className='w-full' onValueChange={(value) => setValue("city", value, { shouldValidate: true })}>
-										<SelectTrigger>
-											<SelectValue placeholder="Select a city" />
-										</SelectTrigger>
-										<SelectContent>
-											{city.map((city) => (
-												<SelectItem key={city._id} value={city.name}>{city.name}</SelectItem>
-											))}
-										</SelectContent>
-									</Select>
-									{errors.city && (<p className="text-red-500 text-sm">{errors.city.message}</p>)}
-								</div>
-
 								{banner.length > 0 && (
-									<div className="grid grid-cols-6 mt-2">
+									<div className="flex gap-4 flex-wrap mt-2">
 										{banner.map((file, idx) => (
 											<img
 												key={idx}
