@@ -40,7 +40,7 @@ export default function CreateBirthdayEvent() {
 		register,
 		handleSubmit,
 		control,
-		setValue,	
+		setValue,
 		watch,
 		formState: { errors }
 	} = useForm({
@@ -69,7 +69,7 @@ export default function CreateBirthdayEvent() {
 	const banner = watch("banner") || []
 	const ageGroup = watch("ageGroup");
 	const formValue = watch();
-	console.log("Form value: ", formValue)
+	// console.log("Form value: ", formValue)
 
 	const onSubmit = async (data) => {
 		const activePackages = Object.values(packages).filter(pkg => pkg.isActive).map(({ isActive, ...rest }) => rest)
@@ -80,7 +80,7 @@ export default function CreateBirthdayEvent() {
 		const formData = new FormData()
 		formData.append("title", data.title)
 		formData.append("ageGroup", data.ageGroup)
-		formData.append("subCategory", data.subCategory)
+		if (ageGroup === 'kids') formData.append("subCategory", data.subCategory)
 		formData.append("duration", data.duration)
 		formData.append("tags", data.tags || "")
 		formData.append("description", data.description)
@@ -95,15 +95,15 @@ export default function CreateBirthdayEvent() {
 		})
 		formData.append("tiers", JSON.stringify(activePackages))
 
-		// for (let pair of formData.entries()) {
-		// 	let [ key, value ] = pair;
-		// 	try {
-		// 		const parsed = JSON.parse(value);
-		// 		console.log(`${key}:`, parsed);
-		// 	} catch (e) {
-		// 		console.log(`${key}:`, value);
-		// 	}
-		// }
+		for (let pair of formData.entries()) {
+			let [ key, value ] = pair;
+			try {
+				const parsed = JSON.parse(value);
+				console.log(`${key}:`, parsed);
+			} catch (e) {
+				console.log(`${key}:`, value);
+			}
+		}
 
 		try {
 			setIsLoading(true)
@@ -122,9 +122,9 @@ export default function CreateBirthdayEvent() {
 	}
 
 	const [ packages, setPackages ] = useState({
-		silver: { name: "Silver (Basic)", isActive: true, price: '', guest: '', description: "", features: [ "" ] },
-		gold: { name: "Gold (Enhanced)", isActive: false, price: '', guest: '', description: "", features: [ "" ] },
-		platinum: { name: "Platinum (Premium)", isActive: false, price: '', guest: '', description: "", features: [ "" ] },
+		silver: { name: "silver", isActive: true, price: '', guest: '', description: "", features: [ "" ] },
+		gold: { name: "gold", isActive: false, price: '', guest: '', description: "", features: [ "" ] },
+		platinum: { name: "platinum", isActive: false, price: '', guest: '', description: "", features: [ "" ] },
 	})
 
 	const handlePackageChange = (packageType, field, value) => {
@@ -210,7 +210,7 @@ export default function CreateBirthdayEvent() {
 										<SelectContent>
 											<SelectItem value="kids">Kids (1-12)</SelectItem>
 											<SelectItem value="teens">Teens (13-19)</SelectItem>
-											<SelectItem value="adults">Adults (20+)</SelectItem>
+											<SelectItem value="adult">Adults (20+)</SelectItem>
 											<SelectItem value="milestone">Milestone</SelectItem>
 										</SelectContent>
 									</Select>
@@ -398,7 +398,7 @@ export default function CreateBirthdayEvent() {
 										/>
 									</div>
 									<div className={`${!packageData.isActive && "pointer-events-none"}`}>
-										<div className="grid gap-4 mb-4">
+										{/* <div className="grid gap-4 mb-4">
 											<div>
 												<Label htmlFor={`${packageType}-name`} >Package Name</Label>
 												<Input
@@ -410,10 +410,10 @@ export default function CreateBirthdayEvent() {
 													required={packageData.isActive}
 												/>
 											</div>
-										</div>
+										</div> */}
 										<div className="grid md:grid-cols-2 gap-4 mb-4">
 											<div>
-												<Label htmlFor={`${packageType}-price`} >Price ($)</Label>
+												<Label htmlFor={`${packageType}-price`} >Price (₹)</Label>
 												<Input
 													id={`${packageType}-price`}
 													type="number"

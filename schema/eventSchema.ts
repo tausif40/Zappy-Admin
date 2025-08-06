@@ -2,7 +2,7 @@ import { z } from "zod"
 
 export const birthdayEventSchema = z.object({
 	title: z.string().min(1, "Title is required"),
-	ageGroup: z.enum(["kids", "teens", "adults", "milestone"], {
+	ageGroup: z.enum(["kids", "teens", "adult", "milestone"], {
 		errorMap: () => ({ message: "Please select an age group" })
 	}),
 	subCategory: z.enum(["Popular Among Boys", "Popular Among Girls", "All-time Classics"]).optional(),
