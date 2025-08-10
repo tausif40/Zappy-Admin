@@ -2,12 +2,14 @@ import { configureStore } from "@reduxjs/toolkit";
 import authSlice from "@/store/features/auth-slice";
 import addOptionsSlice from "@/store/features/addOptions-slice";
 import eventSlice from "@/store/features/event-slice";
+import addOnsSlice from "@/store/features/addOns-slice";
 
 export const store = configureStore({
 	reducer: {
 		authSlice: authSlice,
 		addOptions: addOptionsSlice,
-		eventSlice: eventSlice
+		eventSlice: eventSlice,
+		addOnsSlice: addOnsSlice
 	}
 });
 
