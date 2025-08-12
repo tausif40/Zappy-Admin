@@ -17,6 +17,7 @@ export const birthdayEventSchema = z.object({
 	banner: z.custom<File[]>().refine((files) => files.length > 0, {
 		message: "Please upload at least one banner image"
 	}),
+	addons: z.array(z.string().min(1, "Addon name cannot be empty")).optional(),
 	coreActivity: z.array(z.string().min(1, "Activity cannot be empty")).min(1, "At least one activity required"),
 })
 	.superRefine((data, ctx) => {

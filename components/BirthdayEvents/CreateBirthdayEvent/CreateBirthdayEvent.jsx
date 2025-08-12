@@ -13,28 +13,32 @@ import { ArrowLeft, Plus, X, Upload, Trash2, LoaderCircle, Image } from "lucide-
 import { zodResolver } from "@hookform/resolvers/zod"
 import { Controller, useFieldArray, useForm } from "react-hook-form"
 import { birthdayEventSchema } from "@/schema/eventSchema"
-import { useDispatch } from "react-redux"
+import { useDispatch, useSelector } from "react-redux"
 import { createBirthDayEvent } from "@/store/features/event-slice"
 import { useToast } from "@/hooks/use-toast"
+import { Checkbox } from "@/components/ui/checkbox"
+import { getCategory } from "@/store/features/addOns-slice"
 
 const city = [
-	{ _id: 1, name: "Mumbai" },
-	{ _id: 2, name: "Delhi" },
-	{ _id: 3, name: "Bangalore" },
-	{ _id: 4, name: "Hyderabad" },
-	{ _id: 5, name: "Chennai" },
-	{ _id: 6, name: "Kolkata" },
-	{ _id: 7, name: "Pune" },
-	{ _id: 8, name: "Ahmedabad" },
-	{ _id: 9, name: "Jaipur" },
-	{ _id: 10, name: "Lucknow" }
+	{ _id: 'delhi', name: "Delhi" },
+	{ _id: 'indore', name: "Indore" },
+	{ _id: 'bangalore', name: "Bangalore" },
+	{ _id: 'hyderabad', name: "Hyderabad" },
+	{ _id: 'chennai', name: "Chennai" },
+	{ _id: 'kolkata', name: "Kolkata" },
+	{ _id: 'pune', name: "Pune" },
+	{ _id: 'ahmedabad', name: "Ahmedabad" },
+	{ _id: 'lucknow', name: "Lucknow" }
 ]
 
 export default function CreateBirthdayEvent() {
 	const dispatch = useDispatch();
-	const router = useRouter()
+	const router = useRouter();
 	const { toast } = useToast();
 	const [ isLoading, setIsLoading ] = useState(false);
+
+	const addonCategories = useSelector((state) => state.addOnsSlice.category);
+	console.log(addonCategories);
 
 	const {
 		register,
@@ -47,7 +51,8 @@ export default function CreateBirthdayEvent() {
 		resolver: zodResolver(birthdayEventSchema),
 		defaultValues: {
 			city: "",
-			banner: []
+			banner: [],
+			addons: []
 		}
 	})
 
@@ -66,15 +71,20 @@ export default function CreateBirthdayEvent() {
 		}
 	}, [])
 
+	useEffect(() => {
+		dispatch(getCategory());
+	}, [ dispatch ]);
+
 	const banner = watch("banner") || []
 	const ageGroup = watch("ageGroup");
+	const selectedAddons = watch("addons");
 	const formValue = watch();
 	// console.log("Form value: ", formValue)
 
 	const onSubmit = async (data) => {
 		const activePackages = Object.values(packages).filter(pkg => pkg.isActive).map(({ isActive, ...rest }) => rest)
 
-		// console.log("Form data:", data)
+		console.log("Form data:", data)
 		// console.log("Filtered Active Packages:", activePackages)
 
 		const formData = new FormData()
@@ -92,6 +102,9 @@ export default function CreateBirthdayEvent() {
 		)
 		Array.from(data.banner).forEach((file) => {
 			formData.append("banner", file)
+		})
+		Array.from(data.addons).forEach((cat) => {
+			formData.append("addons", cat)
 		})
 		formData.append("tiers", JSON.stringify(activePackages))
 
@@ -162,6 +175,16 @@ export default function CreateBirthdayEvent() {
 		gold: "border-yellow-400 bg-yellow-50/20",
 		platinum: "border-teal-400 bg-teal-50/20",
 	}
+
+
+	const handleCheckboxChange = (checked, value) => {
+		const currentValues = selectedAddons || [];
+		if (checked) {
+			setValue("addons", [ ...currentValues, value ]);
+		} else {
+			setValue("addons", currentValues.filter((v) => v !== value));
+		}
+	};
 
 	return (
 		<div className="min-h-screen space-y-6">
@@ -266,7 +289,7 @@ export default function CreateBirthdayEvent() {
 										</SelectTrigger>
 										<SelectContent>
 											{city.map((city) => (
-												<SelectItem key={city._id} value={city.name}>{city.name}</SelectItem>
+												<SelectItem key={city._id} value={city._id}>{city.name}</SelectItem>
 											))}
 										</SelectContent>
 									</Select>
@@ -367,6 +390,45 @@ export default function CreateBirthdayEvent() {
 								}
 							</div>
 
+						</CardContent>
+					</Card>
+
+					<Card>
+						<CardHeader>
+							<CardTitle className="text-lg font-semibold">Available Add-on Categories</CardTitle>
+							<CardDescription className="text-sm text-gray-500">
+								Select the add-on categories that will be available for this event
+							</CardDescription>
+						</CardHeader>
+						<CardContent>
+							<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+								{addonCategories?.isLoading ? (
+									<p>Loading categories...</p>
+								) : addonCategories?.data && addonCategories?.data?.length > 0 ? (
+									addonCategories.data.map((cat) => {
+										const isChecked = selectedAddons.includes(cat.name);
+										return (
+											<div key={cat.id} className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-gray-50 transition" >
+												<Checkbox
+													id={`addon-${cat.id}`}
+													checked={isChecked}
+													onCheckedChange={(checked) =>
+														handleCheckboxChange(checked, cat.name)
+													}
+												/>
+												<Label
+													htmlFor={`addon-${cat.id}`}
+													className="cursor-pointer text-gray-700 capitalize"
+												>
+													{cat.name}
+												</Label>
+											</div>
+										);
+									})
+								) : (
+									<p>No categories available</p>
+								)}
+							</div>
 						</CardContent>
 					</Card>
 

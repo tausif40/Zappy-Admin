@@ -34,15 +34,12 @@ export default function AddOns() {
 	})
 	const [ imagePreview, setImagePreview ] = useState(null)
 
-	// Get categories from Redux store
 	const category = useSelector((state) => state.addOnsSlice.category);
 	console.log(category);
-	// Fetch categories on component mount
 	useEffect(() => {
 		dispatch(getCategory());
 	}, [ dispatch ]);
 
-	// Set default category when categories are loaded
 	useEffect(() => {
 		if (category?.data && category?.data?.length > 0 && !newAddon.category) {
 			setNewAddon(prev => ({ ...prev, category: category?.data[ 0 ].name }));
