@@ -18,6 +18,7 @@ import { createBirthDayEvent } from "@/store/features/event-slice"
 import { useToast } from "@/hooks/use-toast"
 import { Checkbox } from "@/components/ui/checkbox"
 import { getCategory } from "@/store/features/addOns-slice"
+import { ScrollArea } from "@/components/ui/scroll-area"
 
 const city = [
 	{ _id: 'delhi', name: "Delhi" },
@@ -36,9 +37,10 @@ export default function CreateBirthdayEvent() {
 	const router = useRouter();
 	const { toast } = useToast();
 	const [ isLoading, setIsLoading ] = useState(false);
+	const [ searchAddOnsCategory, setSearchAddOnsCategory ] = useState("")
 
 	const addonCategories = useSelector((state) => state.addOnsSlice.category);
-	console.log(addonCategories);
+	// console.log(addonCategories);
 
 	const {
 		register,
@@ -79,13 +81,13 @@ export default function CreateBirthdayEvent() {
 	const ageGroup = watch("ageGroup");
 	const selectedAddons = watch("addons");
 	const formValue = watch();
-	// console.log("Form value: ", formValue)
+	// console.log("errors: ", errors)
+	// console.log("selected Addons: ", selectedAddons)
 
 	const onSubmit = async (data) => {
 		const activePackages = Object.values(packages).filter(pkg => pkg.isActive).map(({ isActive, ...rest }) => rest)
 
-		console.log("Form data:", data)
-		// console.log("Filtered Active Packages:", activePackages)
+		// console.log("Form data:", data)
 
 		const formData = new FormData()
 		formData.append("title", data.title)
@@ -104,19 +106,9 @@ export default function CreateBirthdayEvent() {
 			formData.append("banner", file)
 		})
 		Array.from(data.addons).forEach((cat) => {
-			formData.append("addons", cat)
+			formData.append("addOns", cat)
 		})
 		formData.append("tiers", JSON.stringify(activePackages))
-
-		for (let pair of formData.entries()) {
-			let [ key, value ] = pair;
-			try {
-				const parsed = JSON.parse(value);
-				console.log(`${key}:`, parsed);
-			} catch (e) {
-				console.log(`${key}:`, value);
-			}
-		}
 
 		try {
 			setIsLoading(true)
@@ -176,6 +168,9 @@ export default function CreateBirthdayEvent() {
 		platinum: "border-teal-400 bg-teal-50/20",
 	}
 
+	const filteredData = addonCategories?.data?.filter((item) =>
+		item.name.toLowerCase().includes(searchAddOnsCategory.toLowerCase())
+	)
 
 	const handleCheckboxChange = (checked, value) => {
 		const currentValues = selectedAddons || [];
@@ -393,42 +388,54 @@ export default function CreateBirthdayEvent() {
 						</CardContent>
 					</Card>
 
+					{/* select add-ons */}
 					<Card>
 						<CardHeader>
-							<CardTitle className="text-lg font-semibold">Available Add-on Categories</CardTitle>
+							<CardTitle className="text-lg font-semibold">Add AddOns Categories</CardTitle>
 							<CardDescription className="text-sm text-gray-500">
 								Select the add-on categories that will be available for this event
 							</CardDescription>
 						</CardHeader>
 						<CardContent>
-							<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-								{addonCategories?.isLoading ? (
-									<p>Loading categories...</p>
-								) : addonCategories?.data && addonCategories?.data?.length > 0 ? (
-									addonCategories.data.map((cat) => {
-										const isChecked = selectedAddons.includes(cat.name);
-										return (
-											<div key={cat.id} className="flex items-center space-x-2 p-3 border rounded-lg hover:bg-gray-50 transition" >
-												<Checkbox
-													id={`addon-${cat.id}`}
-													checked={isChecked}
-													onCheckedChange={(checked) =>
-														handleCheckboxChange(checked, cat.name)
-													}
-												/>
-												<Label
-													htmlFor={`addon-${cat.id}`}
-													className="cursor-pointer text-gray-700 capitalize"
-												>
-													{cat.name}
-												</Label>
-											</div>
-										);
-									})
-								) : (
-									<p>No categories available</p>
-								)}
+							<div className="mb-4 flex gap-4">
+								<Input
+									type="search"
+									placeholder="search category..."
+									value={searchAddOnsCategory}
+									onChange={(e) => setSearchAddOnsCategory(e.target.value)}
+								/>
+								<Button variant='secondary' type="button">Search</Button>
 							</div>
+							<section className="border p-4 rounded-md">
+								<ScrollArea className="h-[180px]">
+									<div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+										{addonCategories?.isLoading ? (
+											<p>Loading categories...</p>
+										) : addonCategories?.data && addonCategories?.data?.length > 0 ? (
+											filteredData?.map((cat) => {
+												const isChecked = selectedAddons.includes(cat.id);
+												return (
+													<div key={cat.id} className="flex items-center space-x-2 transition" >
+														<Checkbox
+															id={cat.id}
+															checked={isChecked}
+															onCheckedChange={(checked) => handleCheckboxChange(checked, cat.id)}
+														/>
+														<Label
+															htmlFor={cat.id}
+															className="cursor-pointer text-gray-700 capitalize"
+														>
+															{cat.name}
+														</Label>
+													</div>
+												);
+											})
+										) : (
+											<p>No categories available</p>
+										)}
+									</div>
+								</ScrollArea>
+							</section>
 						</CardContent>
 					</Card>
 

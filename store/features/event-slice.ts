@@ -1,8 +1,23 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import apiClient from "@/lib/apiClient";
 
+
+interface BirthdayEventResponse {
+	status: number
+	data: any
+}
+
 // add city
-export const createBirthDayEvent = createAsyncThunk("addOptions/createBirthDayEvent", async (formData, thunkAPI) => {
+export const createBirthDayEvent = createAsyncThunk<BirthdayEventResponse, FormData, { rejectValue: any }>("addOptions/createBirthDayEvent", async (formData, thunkAPI) => {
+
+	for (const [key, value] of formData.entries()) {
+		if (typeof value === "string") {
+			console.log(`${key}: ${value}`)
+		} else {
+			console.log(`${key}: File -> ${value.name}`)
+		}
+	}
+
 	try {
 		const response = await apiClient.post("/birthday-events", formData, {
 			headers: {
